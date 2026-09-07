@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 360" role="img" aria-label="Сертификат Holistic Mind Therapy Practitioner — заглушка, ожидает загрузки">
+  <rect width="500" height="360" fill="#fbf9e9"/>
+  <rect x="14" y="14" width="472" height="332" fill="none" stroke="#7c8a3a" stroke-width="3"/>
+  <rect x="24" y="24" width="452" height="312" fill="none" stroke="#7c8a3a" stroke-width="1"/>
+  <circle cx="250" cy="120" r="34" fill="none" stroke="#5c6a26" stroke-width="3"/>
+  <path d="M232 118l12 14 24-28" fill="none" stroke="#5c6a26" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="250" y="200" text-anchor="middle" font-family="Georgia, serif" font-size="19" fill="#333c1a">Holistic Mind Therapy</text>
+  <text x="250" y="228" text-anchor="middle" font-family="Georgia, serif" font-size="19" fill="#333c1a">Practitioner</text>
+  <text x="250" y="270" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#6d7350">Holistic Mind Therapy Association · 25.12.2023</text>
+  <text x="250" y="320" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#a3a884">Файл сертификата — заглушка</text>
+</svg>

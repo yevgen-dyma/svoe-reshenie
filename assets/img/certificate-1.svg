@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 360" role="img" aria-label="Сертификат Certified Master Hypnotherapist — заглушка, ожидает загрузки">
+  <rect width="500" height="360" fill="#faf7ef"/>
+  <rect x="14" y="14" width="472" height="332" fill="none" stroke="#b79a4a" stroke-width="3"/>
+  <rect x="24" y="24" width="452" height="312" fill="none" stroke="#b79a4a" stroke-width="1"/>
+  <circle cx="250" cy="120" r="34" fill="none" stroke="#8f7530" stroke-width="3"/>
+  <path d="M232 118l12 14 24-28" fill="none" stroke="#8f7530" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="250" y="200" text-anchor="middle" font-family="Georgia, serif" font-size="22" fill="#3c3626">Certified Master</text>
+  <text x="250" y="228" text-anchor="middle" font-family="Georgia, serif" font-size="22" fill="#3c3626">Hypnotherapist</text>
+  <text x="250" y="270" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#6b6450">American Academy of Hypnosis · 09.08.2023</text>
+  <text x="250" y="320" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#a39c86">Файл сертификата — заглушка</text>
+</svg>
