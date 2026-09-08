@@ -436,11 +436,64 @@ button{ font-family: inherit; }
 /* ---------- Certificates ---------- */
 .certificates{ padding: 56px 0; }
 .certificate-grid{ display: flex; flex-direction: column; gap: 22px; }
-.certificate-card{ margin: 0; background: #fff; border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; }
-.certificate-card img{ width: 100%; }
-.certificate-card figcaption{ padding: 16px 18px; }
-.cert-name{ font-weight: 700; color: var(--ink); margin: 0 0 4px; }
-.cert-issuer{ margin: 0; font-size: .85rem; color: var(--ink-faint); }
+.certificate-card{
+  margin: 0;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  padding: 0;
+  font: inherit;
+  text-align: left;
+  cursor: zoom-in;
+  display: block;
+  width: 100%;
+  position: relative;
+  transition: box-shadow .15s ease, transform .15s ease;
+}
+.certificate-card:hover, .certificate-card:focus-visible{ box-shadow: var(--shadow-soft); transform: translateY(-2px); }
+.certificate-card img{ width: 100%; display: block; }
+.cert-zoom{
+  position: absolute;
+  top: 12px; right: 12px;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: rgba(20,23,15,.55);
+  display: flex; align-items: center; justify-content: center;
+}
+.cert-zoom .icon{ color: #fff; width: 17px; height: 17px; }
+.certificate-caption{ display: block; padding: 16px 18px; }
+.cert-name{ display: block; font-weight: 700; color: var(--ink); margin: 0 0 4px; }
+.cert-issuer{ display: block; margin: 0; font-size: .85rem; color: var(--ink-faint); }
+
+/* ---------- Certificate lightbox ---------- */
+.cert-lightbox{ position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 24px; }
+.cert-lightbox[hidden]{ display: none; }
+.cert-lightbox-backdrop{ position: absolute; inset: 0; background: rgba(15,17,11,.82); }
+.cert-lightbox-dialog{
+  position: relative;
+  background: #fff;
+  border-radius: var(--radius-md);
+  max-width: 640px;
+  width: 100%;
+  max-height: 90vh;
+  overflow: auto;
+  z-index: 1;
+}
+.cert-lightbox-dialog img{ width: 100%; display: block; }
+.cert-lightbox-caption{ padding: 16px 18px; }
+.cert-lightbox-close{
+  position: absolute;
+  top: 10px; right: 10px;
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: rgba(20,23,15,.7);
+  border: none;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+}
+.cert-lightbox-close .icon{ color: #fff; width: 18px; height: 18px; }
 
 /* ---------- Video ---------- */
 .video-section{ background: var(--bg-alt); padding: 56px 0; }

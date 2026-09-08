@@ -78,4 +78,45 @@
     );
     observer.observe(finalCta);
   }
+
+  // ---------- Лайтбокс сертификатов ----------
+  var lightbox = document.getElementById("certLightbox");
+  var lightboxImg = document.getElementById("certLightboxImg");
+  var lightboxTitle = document.getElementById("certLightboxTitle");
+  var lightboxIssuer = document.getElementById("certLightboxIssuer");
+  var lastFocused = null;
+
+  function openLightbox(trigger) {
+    if (!lightbox) return;
+    lastFocused = trigger;
+    lightboxImg.src = trigger.getAttribute("data-full");
+    lightboxImg.alt = trigger.getAttribute("data-name") || "";
+    lightboxTitle.textContent = trigger.getAttribute("data-name") || "";
+    lightboxIssuer.textContent = trigger.getAttribute("data-issuer") || "";
+    lightbox.hidden = false;
+    document.body.style.overflow = "hidden";
+    lightbox.querySelector(".cert-lightbox-close").focus();
+  }
+
+  function closeLightbox() {
+    if (!lightbox) return;
+    lightbox.hidden = true;
+    lightboxImg.src = "";
+    document.body.style.overflow = "";
+    if (lastFocused) lastFocused.focus();
+  }
+
+  document.querySelectorAll("[data-cert-open]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      openLightbox(btn);
+    });
+  });
+
+  document.querySelectorAll("[data-cert-close]").forEach(function (el) {
+    el.addEventListener("click", closeLightbox);
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && lightbox && !lightbox.hidden) closeLightbox();
+  });
 })();

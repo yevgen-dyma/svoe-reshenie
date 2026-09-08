@@ -369,27 +369,50 @@
       </div>
 
       <div class="certificate-grid">
-        <figure class="certificate-card">
+        <button type="button" class="certificate-card" data-cert-open data-full="assets/img/certificate-1.jpg" data-name="Certified Master Hypnotherapist" data-issuer="American Academy of Hypnosis · 09.08.2023">
           <img src="assets/img/certificate-1.jpg" alt="Сертификат Certified Master Hypnotherapist" width="780" height="474">
-          <figcaption>
-            <p class="cert-name">Certified Master Hypnotherapist</p>
-            <p class="cert-issuer">American Academy of Hypnosis · 09.08.2023</p>
-          </figcaption>
-        </figure>
-        <figure class="certificate-card">
+          <span class="cert-zoom" aria-hidden="true">
+            <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M11 8v6M8 11h6"/></svg>
+          </span>
+          <span class="certificate-caption">
+            <span class="cert-name">Certified Master Hypnotherapist</span>
+            <span class="cert-issuer">American Academy of Hypnosis · 09.08.2023</span>
+          </span>
+        </button>
+        <button type="button" class="certificate-card" data-cert-open data-full="assets/img/certificate-3.jpg" data-name="Past Life Regression Practitioner" data-issuer="American Academy of Hypnosis · 09.08.2023">
           <img src="assets/img/certificate-3.jpg" alt="Сертификат Past Life Regression Practitioner" width="809" height="488">
-          <figcaption>
-            <p class="cert-name">Past Life Regression Practitioner</p>
-            <p class="cert-issuer">American Academy of Hypnosis · 09.08.2023</p>
-          </figcaption>
-        </figure>
-        <figure class="certificate-card">
+          <span class="cert-zoom" aria-hidden="true">
+            <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M11 8v6M8 11h6"/></svg>
+          </span>
+          <span class="certificate-caption">
+            <span class="cert-name">Past Life Regression Practitioner</span>
+            <span class="cert-issuer">American Academy of Hypnosis · 09.08.2023</span>
+          </span>
+        </button>
+        <button type="button" class="certificate-card" data-cert-open data-full="assets/img/certificate-2.jpg" data-name="Holistic Mind Therapy Practitioner" data-issuer="Holistic Mind Therapy Association · 25.12.2023">
           <img src="assets/img/certificate-2.jpg" alt="Сертификат Holistic Mind Therapy Practitioner" width="731" height="477">
-          <figcaption>
-            <p class="cert-name">Holistic Mind Therapy Practitioner</p>
-            <p class="cert-issuer">Holistic Mind Therapy Association · 25.12.2023</p>
-          </figcaption>
-        </figure>
+          <span class="cert-zoom" aria-hidden="true">
+            <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3M11 8v6M8 11h6"/></svg>
+          </span>
+          <span class="certificate-caption">
+            <span class="cert-name">Holistic Mind Therapy Practitioner</span>
+            <span class="cert-issuer">Holistic Mind Therapy Association · 25.12.2023</span>
+          </span>
+        </button>
+      </div>
+
+      <div class="cert-lightbox" id="certLightbox" hidden>
+        <div class="cert-lightbox-backdrop" data-cert-close></div>
+        <div class="cert-lightbox-dialog" role="dialog" aria-modal="true" aria-labelledby="certLightboxTitle">
+          <button type="button" class="cert-lightbox-close" data-cert-close aria-label="Закрыть">
+            <svg class="icon" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+          <img id="certLightboxImg" src="" alt="">
+          <div class="cert-lightbox-caption">
+            <p id="certLightboxTitle" class="cert-name"></p>
+            <p id="certLightboxIssuer" class="cert-issuer"></p>
+          </div>
+        </div>
       </div>
     </div>
   </section>
