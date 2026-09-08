@@ -413,6 +413,7 @@ button{ font-family: inherit; }
 .about{ background: var(--dark-bg); color: var(--dark-ink); padding: 56px 0 0; }
 .about-grid{ display: flex; flex-direction: column; gap: 28px; }
 .about-photo{ position: relative; border-radius: 180px 180px var(--radius-lg) var(--radius-lg); overflow: hidden; }
+.about-photo img{ width: 100%; height: auto; }
 .about-badge{
   position: absolute; left: 18px; bottom: 18px;
   background: var(--green);
