@@ -21,6 +21,56 @@
     });
   }
 
+  // ---------- Аккордеоны (остальные страхи + FAQ) ----------
+  function setupAccordion(container) {
+    if (!container) return;
+    var triggers = container.querySelectorAll(".accordion-trigger");
+
+    triggers.forEach(function (trigger) {
+      var panel = trigger.nextElementSibling;
+
+      trigger.addEventListener("click", function () {
+        var isOpen = trigger.getAttribute("aria-expanded") === "true";
+
+        triggers.forEach(function (otherTrigger) {
+          if (otherTrigger !== trigger) {
+            otherTrigger.setAttribute("aria-expanded", "false");
+            var otherPanel = otherTrigger.nextElementSibling;
+            if (otherPanel) otherPanel.style.maxHeight = "";
+          }
+        });
+
+        if (isOpen) {
+          trigger.setAttribute("aria-expanded", "false");
+          panel.style.maxHeight = "";
+        } else {
+          trigger.setAttribute("aria-expanded", "true");
+          panel.style.maxHeight = panel.scrollHeight + "px";
+        }
+      });
+    });
+  }
+
+  document.querySelectorAll(".accordion").forEach(setupAccordion);
+
+  // ---------- Переключатели «Посмотреть …» / «Скрыть …» ----------
+  document.querySelectorAll("[data-toggle]").forEach(function (btn) {
+    var targetId = btn.getAttribute("data-toggle");
+    var target = document.getElementById(targetId);
+    if (!target) return;
+    var label = btn.querySelector("[data-toggle-label]");
+    var showText = label ? label.textContent : "";
+    var hideText = "Скрыть";
+
+    btn.addEventListener("click", function () {
+      var isHidden = target.hidden;
+      target.hidden = !isHidden;
+      btn.setAttribute("aria-expanded", isHidden ? "true" : "false");
+      if (label) label.textContent = isHidden ? hideText : showText;
+      if (isHidden) target.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    });
+  });
+
   // ---------- Скрываем плавающую кнопку рядом с финальным CTA ----------
   var stickyCta = document.querySelector(".sticky-cta");
   var finalCta = document.querySelector(".final-cta");
