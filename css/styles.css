@@ -376,17 +376,6 @@ button{ font-family: inherit; }
 .trust-list li{ display: flex; align-items: flex-start; gap: 10px; font-size: .92rem; color: var(--dark-ink-soft); }
 .trust-list .icon{ margin-top: 2px; }
 
-.video-note{
-  display: flex; align-items: flex-start; gap: 12px;
-  background: var(--dark-bg-alt);
-  border: 1px dashed rgba(255,255,255,.18);
-  border-radius: var(--radius-md);
-  padding: 14px 16px;
-  margin-bottom: 22px;
-}
-.video-note .icon{ color: #7fbf94; margin-top: 2px; }
-.video-note p{ margin: 0; font-size: .88rem; color: var(--dark-ink-soft); }
-
 /* ---------- Дополнительные обстоятельства ---------- */
 .circumstances{ padding: 44px 0; }
 .circumstances h2{ max-width: 640px; }
@@ -530,7 +519,6 @@ button{ font-family: inherit; }
   transition: max-height .3s ease;
 }
 .accordion-panel p, .accordion-panel ul{ padding-bottom: 18px; margin: 0; }
-.needs-info{ color: #a5661f; font-style: italic; }
 
 /* ---------- FAQ ---------- */
 .faq{ padding: 56px 0; }
