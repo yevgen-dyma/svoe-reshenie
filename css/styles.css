@@ -236,6 +236,11 @@ button{ font-family: inherit; }
 }
 .hero-photo-frame img{ width: 100%; height: 100%; object-fit: cover; object-position: center top; }
 
+@media (max-width: 639px){
+  .hero-photo-frame{ aspect-ratio: 4 / 5; }
+  .hero-photo-frame img{ object-position: center 12%; }
+}
+
 /* ---------- Section head shared ---------- */
 .section-head{ max-width: 640px; margin-bottom: 32px; }
 .section-head-wide{ max-width: 760px; }
@@ -288,6 +293,20 @@ button{ font-family: inherit; }
   width: 5px; height: 5px;
   border-radius: 50%;
   background: var(--green);
+}
+
+/* ---------- Валидация тревоги ---------- */
+.validate{ background: var(--dark-bg); padding: 48px 0; }
+.validate-inner{ max-width: 760px; text-align: center; margin: 0 auto; }
+.validate-inner h2{
+  color: #fff;
+  font-size: 26px;
+  margin-bottom: 16px;
+}
+.validate-inner p{
+  color: var(--dark-ink-soft);
+  font-size: 17px;
+  line-height: 1.6;
 }
 
 /* ---------- Как тревога проявляется ---------- */
@@ -361,13 +380,14 @@ button{ font-family: inherit; }
 .about-photo img{ width: 100%; height: 100%; object-fit: cover; object-position: center top; }
 .about-badge{
   position: absolute; left: 18px; bottom: 18px;
-  background: var(--green);
+  background: var(--green-dark);
   color: #fff;
   padding: 12px 16px;
   border-radius: var(--radius-sm);
+  box-shadow: 0 4px 14px rgba(0,0,0,.25);
 }
 .about-badge-label{ font-size: .68rem; text-transform: uppercase; letter-spacing: .05em; margin: 0 0 2px; color: #cfe9d8; }
-.about-badge-text{ margin: 0; font-weight: 700; }
+.about-badge-text{ margin: 0; font-weight: 700; color: #fff; }
 .about-content h2{ color: var(--dark-ink); }
 .about-lede{ font-style: italic; font-family: var(--font-serif); font-size: 1.2rem; color: var(--dark-ink); margin-bottom: 16px; }
 .about-content p{ color: var(--dark-ink-soft); }
@@ -450,7 +470,8 @@ button{ font-family: inherit; }
 }
 .cert-zoom .icon{ color: #fff; width: 17px; height: 17px; }
 .certificate-caption{ display: block; padding: 16px 18px; }
-.cert-name{ display: block; font-weight: 700; color: var(--ink); margin: 0 0 4px; }
+.cert-name{ display: block; font-weight: 700; color: var(--ink); margin: 0 0 2px; }
+.cert-name-en{ display: block; font-size: .82rem; color: var(--ink-faint); margin: 0 0 4px; }
 .cert-issuer{ display: block; margin: 0; font-size: .85rem; color: var(--ink-faint); }
 
 /* ---------- Certificate lightbox ---------- */
@@ -550,7 +571,8 @@ button{ font-family: inherit; }
 /* ---------- Sticky mobile CTA ---------- */
 .sticky-cta{
   position: fixed;
-  left: 14px; right: 14px; bottom: 14px;
+  left: 14px; right: 14px;
+  bottom: calc(14px + env(safe-area-inset-bottom, 0px));
   z-index: 70;
   background: var(--green);
   color: #fff;
@@ -559,6 +581,8 @@ button{ font-family: inherit; }
   padding: 15px 18px;
   border-radius: 999px;
   box-shadow: 0 16px 30px -10px rgba(18,55,38,.55);
+  opacity: 0;
+  pointer-events: none;
   transition: opacity .2s ease;
 }
 

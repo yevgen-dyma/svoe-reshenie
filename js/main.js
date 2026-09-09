@@ -71,27 +71,56 @@
     });
   });
 
-  // ---------- Скрываем плавающую кнопку рядом с финальным CTA ----------
+  // ---------- Плавающая кнопка: скрыта на первом экране и рядом с финальным CTA ----------
   var stickyCta = document.querySelector(".sticky-cta");
+  var hero = document.querySelector(".hero");
   var finalCta = document.querySelector(".final-cta");
 
-  if (stickyCta && finalCta && "IntersectionObserver" in window) {
-    var observer = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          stickyCta.style.opacity = entry.isIntersecting ? "0" : "1";
-          stickyCta.style.pointerEvents = entry.isIntersecting ? "none" : "auto";
-        });
-      },
-      { threshold: 0.2 }
-    );
-    observer.observe(finalCta);
+  if (stickyCta && "IntersectionObserver" in window) {
+    var heroVisible = !!hero;
+    var finalCtaVisible = false;
+
+    function updateStickyCta() {
+      var shouldShow = !heroVisible && !finalCtaVisible;
+      stickyCta.style.opacity = shouldShow ? "1" : "0";
+      stickyCta.style.pointerEvents = shouldShow ? "auto" : "none";
+    }
+
+    if (hero) {
+      new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            heroVisible = entry.isIntersecting;
+            updateStickyCta();
+          });
+        },
+        { threshold: 0 }
+      ).observe(hero);
+    }
+
+    if (finalCta) {
+      new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            finalCtaVisible = entry.isIntersecting;
+            updateStickyCta();
+          });
+        },
+        { threshold: 0.2 }
+      ).observe(finalCta);
+    }
+
+    updateStickyCta();
+  } else if (stickyCta) {
+    stickyCta.style.opacity = "1";
+    stickyCta.style.pointerEvents = "auto";
   }
 
   // ---------- Лайтбокс сертификатов ----------
   var lightbox = document.getElementById("certLightbox");
   var lightboxImg = document.getElementById("certLightboxImg");
   var lightboxTitle = document.getElementById("certLightboxTitle");
+  var lightboxTitleEn = document.getElementById("certLightboxTitleEn");
   var lightboxIssuer = document.getElementById("certLightboxIssuer");
   var lastFocused = null;
 
@@ -101,6 +130,7 @@
     lightboxImg.src = trigger.getAttribute("data-full");
     lightboxImg.alt = trigger.getAttribute("data-name") || "";
     lightboxTitle.textContent = trigger.getAttribute("data-name") || "";
+    if (lightboxTitleEn) lightboxTitleEn.textContent = trigger.getAttribute("data-name-en") || "";
     lightboxIssuer.textContent = trigger.getAttribute("data-issuer") || "";
     lightbox.hidden = false;
     document.body.style.overflow = "hidden";
