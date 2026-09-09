@@ -373,6 +373,50 @@ button{ font-family: inherit; }
 .benefit-item{ display: flex; align-items: flex-start; gap: 12px; background: #fff; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; }
 .benefit-item p{ margin: 0; font-weight: 600; color: var(--ink); font-size: .95rem; }
 
+/* ---------- Среда для ребёнка ---------- */
+.child-impact{ background: var(--bg-alt); padding: 64px 0; }
+.child-impact-inner{ max-width: 880px; margin: 0 auto; }
+.child-impact h2{ max-width: 720px; margin-bottom: 20px; }
+.child-impact-lede{ font-size: 1.05rem; line-height: 1.65; color: var(--ink); }
+.child-impact-intro{
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.12rem;
+  color: var(--green-dark);
+  margin: 26px 0 24px;
+}
+
+.child-impact-grid{ display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 32px; }
+.child-impact-item{
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 22px 24px;
+  box-shadow: var(--shadow-soft);
+}
+.child-impact-item h3{ font-size: 1.02rem; margin-bottom: 8px; color: var(--green-dark); }
+.child-impact-item p{ margin: 0; color: var(--ink-soft); font-size: .93rem; line-height: 1.55; }
+
+.child-impact-mother{
+  background: var(--green-dark);
+  color: #fff;
+  border-radius: var(--radius-lg);
+  padding: 30px 26px;
+  margin-bottom: 28px;
+}
+.child-impact-mother h3{ color: #fff; font-size: 1.1rem; margin-bottom: 10px; }
+.child-impact-mother p{ margin: 0; color: var(--dark-ink-soft); }
+
+.child-impact-closing{
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.2rem;
+  text-align: center;
+  color: var(--green-dark);
+  margin: 0;
+}
+
 /* ---------- About ---------- */
 .about{ background: var(--dark-bg); color: var(--dark-ink); padding: 56px 0; }
 .about-grid{ display: flex; flex-direction: column; gap: 28px; }
@@ -598,6 +642,7 @@ button{ font-family: inherit; }
   .manifest-grid{ display: grid; grid-template-columns: repeat(3, 1fr); }
   .stats-grid{ display: grid; grid-template-columns: 1fr 1fr; }
   .benefits-grid{ display: grid; grid-template-columns: 1fr 1fr; }
+  .child-impact-grid{ grid-template-columns: 1fr 1fr; }
   .certificate-grid{ display: grid; grid-template-columns: repeat(3, 1fr); }
   .roadmap{ display: flex; flex-direction: row; gap: 24px; }
   .roadmap-step{ flex: 1; padding: 32px 0 0; border-left: none; border-top: 2px solid var(--green-soft); }
