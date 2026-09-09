@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Своё решение — стили. Mobile-first: базовые правила для телефона,
+   Мама, выдохни — стили. Mobile-first: базовые правила для телефона,
    расширения для планшета и десктопа идут в @media (min-width: ...).
    ========================================================================== */
 
@@ -106,8 +106,6 @@ button{ font-family: inherit; }
 .icon{ width: 1.1em; height: 1.1em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
 .icon-lg{ width: 34px; height: 34px; stroke-width: 1.6; color: var(--green); margin-bottom: 14px; }
 .icon-check{ color: var(--green); width: 22px; height: 22px; }
-.icon-check-circle{ color: var(--green); width: 1.3em; height: 1.3em; margin-right: .35em; vertical-align: -3px; }
-.icon-x-circle{ color: #b45d4b; width: 1.3em; height: 1.3em; margin-right: .35em; vertical-align: -3px; }
 .icon-heart{ width: 40px; height: 40px; color: #cfe3d5; margin-bottom: 18px; }
 
 /* ---------- Buttons ---------- */
@@ -212,46 +210,10 @@ button{ font-family: inherit; }
 /* ---------- Hero ---------- */
 .hero{ padding: 44px 0 56px; }
 .hero-grid{ display: flex; flex-direction: column; gap: 36px; }
-.hero-title em{ font-style: italic; color: var(--green); }
-.hero-sub{ font-size: 1.02rem; }
+.hero-sub{ font-size: 1.05rem; color: var(--ink); font-weight: 600; }
+.hero-extra{ font-size: 1rem; }
 
-.check-list{ display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px; }
-.check-list li{
-  position: relative;
-  padding-left: 30px;
-  font-weight: 600;
-  color: var(--ink);
-  font-size: .95rem;
-}
-.check-list li::before{
-  content: "";
-  position: absolute;
-  left: 0; top: 3px;
-  width: 20px; height: 20px;
-  border-radius: 50%;
-  background: var(--green-soft);
-  border: 1.5px solid var(--green);
-}
-.check-list li::after{
-  content: "";
-  position: absolute;
-  left: 5px; top: 8px;
-  width: 10px; height: 5px;
-  border-left: 2px solid var(--green);
-  border-bottom: 2px solid var(--green);
-  transform: rotate(-45deg);
-}
-
-.hero-note{
-  background: var(--green-soft);
-  border-radius: var(--radius-md);
-  padding: 16px 18px;
-  margin-bottom: 22px;
-}
-.hero-note p{ margin: 0 0 6px; }
-.hero-note p:last-child{ margin-bottom: 0; }
-
-.hero-actions{ margin-bottom: 20px; }
+.hero-actions{ margin: 4px 0 20px; }
 
 .tag-list{ display: flex; flex-wrap: wrap; gap: 10px 18px; }
 .tag-list li{
@@ -268,146 +230,116 @@ button{ font-family: inherit; }
 }
 .hero-photo-frame img{ width: 100%; height: auto; }
 
-.floating-quote{
-  margin: -50px 16px 0;
-  background: #fff;
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-soft);
-  padding: 18px 20px;
-  position: relative;
-  z-index: 2;
-}
-.floating-quote p{ font-style: italic; color: var(--ink); margin: 0 0 8px; font-size: .95rem; }
-.floating-quote cite{ font-size: .72rem; letter-spacing: .04em; text-transform: uppercase; color: var(--green); font-style: normal; font-weight: 700; }
-
 /* ---------- Section head shared ---------- */
 .section-head{ max-width: 640px; margin-bottom: 32px; }
 .section-head-wide{ max-width: 760px; }
 .section-head p{ font-size: 1.02rem; }
 
-/* ---------- Situations ---------- */
-.situations{ padding: 56px 0; }
-.situation-grid{ display: flex; flex-direction: column; gap: 18px; }
-.situation-card{
+/* ---------- Основные страхи ---------- */
+.fears{ padding: 56px 0; }
+.fear-grid{ display: flex; flex-direction: column; gap: 18px; }
+.fear-card{
   background: #fff;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 26px 22px;
+}
+.fear-card h3{ font-size: 1.1rem; margin-bottom: 12px; }
+.fear-card ul{ display: flex; flex-direction: column; gap: 8px; }
+.fear-card li{
   position: relative;
+  padding-left: 16px;
+  font-size: .92rem;
+  color: var(--ink-soft);
 }
-.situation-card--accent{
-  background: var(--dark-bg);
-  border-color: var(--dark-bg);
-}
-.situation-card--accent h3, .situation-card--accent p{ color: var(--dark-ink); }
-.situation-card--accent .situation-tag{ color: #9fd6b3; }
-.situation-card--accent p{ color: var(--dark-ink-soft); }
-.situation-num{
-  position: absolute; top: 22px; right: 22px;
-  font-family: var(--font-serif);
-  font-style: italic;
-  color: var(--ink-faint);
-  font-size: 1.4rem;
-}
-.situation-card--accent .situation-num{ color: #4a5b4d; }
-.situation-tag{
-  display: inline-block;
-  font-size: .72rem;
-  font-weight: 700;
-  letter-spacing: .05em;
-  text-transform: uppercase;
-  color: var(--green);
-  background: var(--green-soft);
-  padding: 5px 10px;
-  border-radius: 999px;
-  margin-bottom: 14px;
-}
-.situation-card--accent .situation-tag{ background: rgba(255,255,255,.1); color: #cfe9d8; }
-.situation-card h3{ font-size: 1.2rem; margin-bottom: 10px; padding-right: 40px; }
-.card-link{
-  display: inline-flex; align-items: center; gap: 8px;
-  font-weight: 700; color: var(--green);
-  margin-top: 10px;
-}
-.card-link .icon{ width: 15px; height: 15px; background: var(--green-soft); border-radius: 50%; padding: 5px; box-sizing: content-box; color: var(--green); }
-.situation-card--accent .card-link{ color: #bfe8cc; }
-.situation-card--accent .card-link .icon{ background: rgba(255,255,255,.12); color: #bfe8cc; }
-
-/* ---------- Dark block / quote ---------- */
-.dark-block{ background: var(--dark-bg); color: var(--dark-ink); padding: 52px 0; }
-.dark-block-grid{ display: flex; flex-direction: column; gap: 26px; }
-.dark-block-title{ color: var(--dark-ink); }
-.quote-card{
-  border-left: 3px solid var(--green);
-  padding-left: 18px;
-  margin: 0;
-}
-.quote-card p{ font-style: italic; color: var(--dark-ink); font-size: 1.05rem; margin: 0; }
-
-.essence{ padding: 52px 0; }
-.essence-grid{ display: flex; flex-direction: column; gap: 22px; }
-
-/* ---------- First step ---------- */
-.first-step{ background: var(--bg-alt); padding: 56px 0; }
-.clarify-grid{ display: flex; flex-direction: column; gap: 18px; margin-bottom: 28px; }
-.clarify-item{ display: flex; align-items: flex-start; gap: 12px; padding: 16px 0; border-top: 1px solid var(--border); }
-.clarify-item p{ margin: 0; font-weight: 600; color: var(--ink); font-size: .95rem; }
-.result-box{
-  background: var(--green-soft);
-  border-radius: var(--radius-md);
-  padding: 22px 22px;
-  margin-bottom: 28px;
-  border-left: 4px solid var(--green);
-}
-.result-box h3{ margin-bottom: 8px; font-size: 1.15rem; }
-.result-box p{ margin: 0; color: var(--ink-soft); }
-.center-cta{ display: flex; justify-content: center; }
-
-/* ---------- Accordion (stages + FAQ) ---------- */
-.accordion{ border-top: 1px solid var(--border); }
-.accordion-item{ border-bottom: 1px solid var(--border); }
-.accordion-trigger{
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  background: none;
-  border: none;
-  text-align: left;
-  padding: 20px 0;
-  cursor: pointer;
-}
-.accordion-num{ font-family: var(--font-serif); font-style: italic; color: var(--green); font-size: 1.1rem; flex-shrink: 0; width: 30px; }
-.accordion-title{ flex: 1; font-weight: 700; color: var(--ink); font-size: 1.02rem; }
-.accordion-icon{ position: relative; width: 18px; height: 18px; flex-shrink: 0; }
-.accordion-icon::before, .accordion-icon::after{
+.fear-card li::before{
   content: "";
   position: absolute;
+  left: 0; top: .6em;
+  width: 5px; height: 5px;
+  border-radius: 50%;
   background: var(--green);
-  border-radius: 2px;
-  transition: transform .2s ease;
 }
-.accordion-icon::before{ width: 18px; height: 2px; top: 8px; left: 0; }
-.accordion-icon::after{ width: 2px; height: 18px; top: 0; left: 8px; }
-.accordion-trigger[aria-expanded="true"] .accordion-icon::after{ transform: scaleY(0); }
 
-.accordion-panel{
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height .3s ease;
+/* ---------- Дополнительные обстоятельства ---------- */
+.circumstances{ background: var(--bg-alt); padding: 44px 0; }
+.circumstances h2{ max-width: 640px; }
+.tag-cloud{ display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+.tag-cloud li{
+  background: #fff;
+  border: 1px solid var(--border);
+  color: var(--ink-soft);
+  font-size: .88rem;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 999px;
 }
-.accordion-panel p{ padding-bottom: 18px; margin: 0; }
-.stage-outcome{ color: var(--green-dark); font-weight: 700; font-size: .9rem; }
 
-.important-box{
-  margin-top: 28px;
-  background: var(--dark-bg);
-  color: var(--dark-ink);
+/* ---------- Статистика ---------- */
+.stats{ padding: 56px 0; }
+.stats-grid{ display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; }
+.stat-card{
+  background: var(--green-soft);
   border-radius: var(--radius-md);
   padding: 22px;
 }
-.important-label{ text-transform: uppercase; letter-spacing: .06em; font-size: .72rem; font-weight: 700; color: #9fd6b3; margin-bottom: 8px; }
-.important-box p:last-child{ margin: 0; color: var(--dark-ink-soft); }
+.stat-number{
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 1.7rem;
+  color: var(--green-dark);
+  margin: 0 0 6px;
+}
+.stat-text{ margin: 0; font-size: .92rem; color: var(--ink-soft); }
+.stats-fine-print{ font-size: .85rem; color: var(--ink-faint); max-width: 680px; }
+.source-list{ display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+.source-list a{ font-size: .85rem; color: var(--green); font-weight: 600; }
+.source-list a:hover{ color: var(--green-dark); text-decoration: underline; }
+
+/* ---------- Как тревога проявляется ---------- */
+.manifest{ background: var(--bg-alt); padding: 56px 0; }
+.manifest-grid{ display: flex; flex-direction: column; gap: 18px; margin-top: 24px; }
+.manifest-card{ background: #fff; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px; }
+.manifest-label{
+  font-family: var(--font-serif);
+  font-weight: 700;
+  color: var(--green-dark);
+  font-size: 1.1rem;
+  margin: 0 0 12px;
+}
+.manifest-card ul{ display: flex; flex-direction: column; gap: 8px; }
+.manifest-card li{
+  position: relative;
+  padding-left: 16px;
+  font-size: .92rem;
+  color: var(--ink-soft);
+}
+.manifest-card li::before{
+  content: "";
+  position: absolute;
+  left: 0; top: .6em;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--green);
+}
+
+/* ---------- Формат работы ---------- */
+.format-section{ padding: 56px 0; }
+.format-grid{ display: flex; flex-direction: column; gap: 28px; }
+.format-list{ display: flex; flex-direction: column; gap: 14px; }
+.format-list li{
+  display: flex; align-items: center; gap: 12px;
+  font-weight: 600; color: var(--ink);
+  background: var(--green-soft);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+}
+
+/* ---------- Что можно получить ---------- */
+.benefits{ background: var(--bg-alt); padding: 56px 0; }
+.benefits-grid{ display: flex; flex-direction: column; gap: 14px; margin: 24px 0; }
+.benefit-item{ display: flex; align-items: flex-start; gap: 12px; background: #fff; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; }
+.benefit-item p{ margin: 0; font-weight: 600; color: var(--ink); font-size: .95rem; }
 
 /* ---------- About ---------- */
 .about{ background: var(--dark-bg); color: var(--dark-ink); padding: 56px 0 0; }
@@ -495,66 +427,12 @@ button{ font-family: inherit; }
 }
 .cert-lightbox-close .icon{ color: #fff; width: 18px; height: 18px; }
 
-/* ---------- Video ---------- */
-.video-section{ background: var(--bg-alt); padding: 56px 0; }
-.video-grid{ display: flex; flex-direction: column; gap: 26px; }
-.video-embed{
-  position: relative;
-  padding-top: 56.25%;
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  box-shadow: var(--shadow-soft);
-  background: #000;
-}
-.video-embed iframe{ position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-
-/* ---------- Included ---------- */
-.included{ padding: 56px 0; }
-.included-head{ display: flex; flex-direction: column; gap: 16px; margin-bottom: 16px; }
-.duration-badge{
-  align-self: flex-start;
-  background: var(--green-soft);
-  color: var(--green-dark);
-  font-weight: 700;
-  font-size: .85rem;
-  padding: 10px 16px;
-  border-radius: 999px;
-}
-.included-lede{ font-size: 1.02rem; margin-bottom: 32px; }
-.included-grid{ display: grid; grid-template-columns: 1fr; gap: 18px; margin-bottom: 40px; }
-.included-card{ background: #fff; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px; }
-.included-card h3{ font-size: 1.05rem; margin-bottom: 6px; }
-.included-card p{ margin: 0; font-size: .92rem; }
-
-.conditions-block{
-  background: var(--dark-bg);
-  color: var(--dark-ink);
-  border-radius: var(--radius-lg);
-  padding: 32px 26px;
-}
-.conditions-block h3{ color: var(--dark-ink); margin-bottom: 10px; }
-.conditions-block p{ color: var(--dark-ink-soft); }
-
-/* ---------- Fit section ---------- */
-.fit-section{ padding: 0 0 56px; }
-.fit-grid{ display: flex; flex-direction: column; gap: 18px; }
-.fit-card{ border-radius: var(--radius-lg); padding: 28px 24px; }
-.fit-card--yes{ background: #fff; border: 1px solid var(--border); }
-.fit-card--no{ background: var(--green-soft); }
-.fit-card h3{ display: flex; align-items: center; font-size: 1.15rem; margin-bottom: 18px; }
-.fit-card ul{ display: flex; flex-direction: column; gap: 12px; }
-.fit-card li{ padding-left: 6px; font-size: .95rem; color: var(--ink-soft); }
-
-/* ---------- FAQ ---------- */
-.faq{ padding: 56px 0; }
-.faq-grid{ display: flex; flex-direction: column; gap: 12px; }
-.faq-head{ max-width: 640px; margin-bottom: 8px; }
-
-/* ---------- Final CTA ---------- */
+/* ---------- Final CTA / первый шаг ---------- */
 .final-cta{ background: var(--green-dark); color: #fff; padding: 64px 0; text-align: center; }
 .final-cta-inner{ display: flex; flex-direction: column; align-items: center; max-width: 620px; margin: 0 auto; }
 .final-cta h2{ color: #fff; }
-.final-cta p{ color: #d7e6dc; margin-bottom: 26px; }
+.final-cta p{ color: #d7e6dc; margin-bottom: 10px; }
+.final-cta-note{ font-size: .88rem; color: #a9c4b3; margin-bottom: 26px; }
 .final-cta .btn{ width: auto; padding: 1em 2.2em; }
 
 /* ---------- Footer ---------- */
@@ -590,12 +468,13 @@ button{ font-family: inherit; }
    Планшет и выше
    ========================================================================== */
 @media (min-width: 720px){
-  .situation-grid{ display: grid; grid-template-columns: 1fr 1fr; }
-  .included-grid{ grid-template-columns: 1fr 1fr; }
+  .fear-grid{ display: grid; grid-template-columns: 1fr 1fr; }
+  .manifest-grid{ display: grid; grid-template-columns: repeat(3, 1fr); }
+  .stats-grid{ display: grid; grid-template-columns: 1fr 1fr; }
+  .benefits-grid{ display: grid; grid-template-columns: 1fr 1fr; }
   .certificate-grid{ display: grid; grid-template-columns: repeat(3, 1fr); }
-  .clarify-grid{ display: grid; grid-template-columns: 1fr 1fr; column-gap: 32px; }
   .principle-grid{ grid-template-columns: repeat(2, 1fr); }
-  .fit-grid{ display: grid; grid-template-columns: 1fr 1fr; }
+  .format-list{ display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .btn-lg{ width: auto; }
 }
 
@@ -622,26 +501,19 @@ button{ font-family: inherit; }
   .hero-media{ flex: 1 1 40%; }
   .hero-actions .btn{ width: auto; }
 
-  .dark-block-grid{ flex-direction: row; align-items: center; justify-content: space-between; gap: 60px; }
-  .dark-block-title{ max-width: 520px; }
-  .quote-card{ max-width: 420px; }
-
-  .essence-grid{ flex-direction: row; gap: 60px; }
-  .essence-grid > div{ flex: 1; }
+  .fear-grid{ grid-template-columns: repeat(3, 1fr); }
 
   .about-grid{ flex-direction: row; align-items: center; gap: 60px; }
   .about-photo{ flex: 0 0 40%; }
   .about-content{ flex: 1; }
   .principle-grid{ grid-template-columns: repeat(4, 1fr); }
 
-  .included-grid{ grid-template-columns: repeat(4, 1fr); }
-  .included-head{ flex-direction: row; align-items: flex-start; justify-content: space-between; }
+  .format-grid{ flex-direction: row; gap: 60px; align-items: flex-start; }
+  .format-grid > div:first-child{ flex: 1 1 50%; }
+  .format-list{ flex: 1 1 42%; grid-template-columns: 1fr; }
 
-  .video-grid{ flex-direction: row; align-items: center; gap: 60px; }
-  .video-grid > div:first-child{ flex: 1; }
-  .video-embed{ flex: 1; }
-
-  .situation-card h3{ min-height: 84px; }
+  .stats-grid{ grid-template-columns: repeat(4, 1fr); }
+  .benefits-grid{ grid-template-columns: repeat(3, 1fr); }
 
   .sticky-cta{ display: none; }
 }
