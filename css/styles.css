@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Мама, выдохни — стили. Mobile-first: базовые правила для телефона,
+   Спокойная беременность — стили. Mobile-first: базовые правила для телефона,
    расширения для планшета и десктопа идут в @media (min-width: ...).
    ========================================================================== */
 
@@ -229,6 +229,12 @@ button{ font-family: inherit; }
   box-shadow: var(--shadow-soft);
 }
 .hero-photo-frame img{ width: 100%; height: auto; }
+
+/* ---------- Тревогу не нужно обесценивать ---------- */
+.validate-block{ background: var(--dark-bg); color: var(--dark-ink); padding: 48px 0; text-align: center; }
+.validate-inner{ max-width: 720px; margin: 0 auto; }
+.validate-inner h2{ color: var(--dark-ink); }
+.validate-inner p{ color: var(--dark-ink-soft); font-size: 1.05rem; margin: 0; }
 
 /* ---------- Section head shared ---------- */
 .section-head{ max-width: 640px; margin-bottom: 32px; }
