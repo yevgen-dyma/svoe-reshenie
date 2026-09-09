@@ -71,49 +71,60 @@
     });
   });
 
-  // ---------- Плавающая кнопка: скрыта на первом экране и рядом с финальным CTA ----------
+  // ---------- Плавающая кнопка: скрыта на первом экране, рядом с финальным CTA
+  //            и в любой момент, когда она геометрически перекрыла бы другой блок с такой же кнопкой ----------
   var stickyCta = document.querySelector(".sticky-cta");
   var hero = document.querySelector(".hero");
   var finalCta = document.querySelector(".final-cta");
+  var centerCtas = Array.prototype.slice.call(document.querySelectorAll(".center-cta"));
 
-  if (stickyCta && "IntersectionObserver" in window) {
-    var heroVisible = !!hero;
-    var finalCtaVisible = false;
+  if (stickyCta) {
+    var rectsOverlap = function (a, b) {
+      return !(a.right < b.left || a.left > b.right || a.bottom < b.top || a.top > b.bottom);
+    };
 
-    function updateStickyCta() {
-      var shouldShow = !heroVisible && !finalCtaVisible;
+    var ticking = false;
+
+    function computeStickyVisibility() {
+      ticking = false;
+      var viewH = window.innerHeight;
+
+      var heroVisible = false;
+      if (hero) {
+        var hr = hero.getBoundingClientRect();
+        heroVisible = hr.bottom > 0 && hr.top < viewH;
+      }
+
+      var finalCtaVisible = false;
+      if (finalCta) {
+        var fr = finalCta.getBoundingClientRect();
+        var visibleHeight = Math.min(fr.bottom, viewH) - Math.max(fr.top, 0);
+        finalCtaVisible = visibleHeight > fr.height * 0.2;
+      }
+
+      // Показываем кнопку, чтобы можно было измерить её реальное положение,
+      // затем проверяем перекрытие с другими блоками с такой же кнопкой.
+      stickyCta.style.opacity = "1";
+      var stickyRect = stickyCta.getBoundingClientRect();
+      var overlapsCenterCta = centerCtas.some(function (el) {
+        return rectsOverlap(el.getBoundingClientRect(), stickyRect);
+      });
+
+      var shouldShow = !heroVisible && !finalCtaVisible && !overlapsCenterCta;
       stickyCta.style.opacity = shouldShow ? "1" : "0";
       stickyCta.style.pointerEvents = shouldShow ? "auto" : "none";
     }
 
-    if (hero) {
-      new IntersectionObserver(
-        function (entries) {
-          entries.forEach(function (entry) {
-            heroVisible = entry.isIntersecting;
-            updateStickyCta();
-          });
-        },
-        { threshold: 0 }
-      ).observe(hero);
+    function onScrollOrResize() {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(computeStickyVisibility);
+      }
     }
 
-    if (finalCta) {
-      new IntersectionObserver(
-        function (entries) {
-          entries.forEach(function (entry) {
-            finalCtaVisible = entry.isIntersecting;
-            updateStickyCta();
-          });
-        },
-        { threshold: 0.2 }
-      ).observe(finalCta);
-    }
-
-    updateStickyCta();
-  } else if (stickyCta) {
-    stickyCta.style.opacity = "1";
-    stickyCta.style.pointerEvents = "auto";
+    window.addEventListener("scroll", onScrollOrResize, { passive: true });
+    window.addEventListener("resize", onScrollOrResize);
+    computeStickyVisibility();
   }
 
   // ---------- Лайтбокс сертификатов ----------
