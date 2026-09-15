@@ -20,7 +20,20 @@
       profile: { name: "" },
       registration: null,
       answers: {},
-      history: []
+      history: [],
+      relInvestigation: {
+        situation: "",
+        profile: {
+          lastName: "",
+          firstName: "",
+          patronymic: "",
+          birthDate: "",
+          marital: "",
+          kids: "",
+          occupation: "",
+          income: ""
+        }
+      }
     };
   }
 
@@ -29,9 +42,13 @@
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return defaultState();
       const parsed = JSON.parse(raw);
-      return Object.assign(defaultState(), parsed, {
+      const base = defaultState();
+      return Object.assign(base, parsed, {
         answers: Object.assign({}, parsed.answers),
-        history: Array.isArray(parsed.history) ? parsed.history : []
+        history: Array.isArray(parsed.history) ? parsed.history : [],
+        relInvestigation: Object.assign({}, base.relInvestigation, parsed.relInvestigation, {
+          profile: Object.assign({}, base.relInvestigation.profile, parsed.relInvestigation && parsed.relInvestigation.profile)
+        })
       });
     } catch (e) {
       return defaultState();
@@ -123,28 +140,108 @@
   }
   updateMoneyDisplay();
 
-  /* ---------------- relationships screen ---------------- */
+  /* ---------------- relationships investigation ---------------- */
 
-  const relOptions = $("#relOptions");
-  const relFinishBtn = $('[data-finish="relationships"]');
-  let relChoice = state.answers.relationships ? state.answers.relationships.choice : null;
-
-  function renderRelSelection() {
-    $$(".option", relOptions).forEach((btn) => {
-      const on = btn.dataset.value === relChoice;
-      btn.setAttribute("aria-checked", on ? "true" : "false");
+  function bindSingleSelect(container, getValue, setValue) {
+    if (!container) return;
+    function render() {
+      $$(".option", container).forEach((btn) => {
+        btn.setAttribute("aria-checked", btn.dataset.value === getValue() ? "true" : "false");
+      });
+    }
+    container.addEventListener("click", (e) => {
+      const btn = e.target.closest(".option");
+      if (!btn) return;
+      const current = getValue();
+      const next = current === btn.dataset.value ? "" : btn.dataset.value;
+      setValue(next);
+      render();
+      vibrate(6);
     });
-    relFinishBtn.disabled = !relChoice;
+    render();
   }
 
-  relOptions.addEventListener("click", (e) => {
-    const btn = e.target.closest(".option");
-    if (!btn) return;
-    relChoice = btn.dataset.value;
-    renderRelSelection();
-    vibrate(6);
-  });
-  renderRelSelection();
+  // — case file cover: "Старт" is a plain [data-open] button, handled by the global click binding —
+
+  // — question 1: free text, saved as the user types —
+  const relSituationInput = $("#relSituation");
+  if (relSituationInput) {
+    relSituationInput.value = state.relInvestigation.situation || "";
+    relSituationInput.addEventListener("input", () => {
+      state.relInvestigation.situation = relSituationInput.value;
+      saveState();
+    });
+  }
+
+  // — get acquainted form —
+  const relProfileForm = $("#relProfileForm");
+  const relProfileNextBtn = $("#relProfileNext");
+
+  function relProfileData() {
+    return state.relInvestigation.profile;
+  }
+
+  function renderRelProfileForm() {
+    const p = relProfileData();
+    ["lastName", "firstName", "patronymic", "occupation"].forEach((key) => {
+      if (relProfileForm.elements[key]) relProfileForm.elements[key].value = p[key] || "";
+    });
+    if (relProfileForm.elements.birthDate) relProfileForm.elements.birthDate.value = p.birthDate || "";
+  }
+
+  function checkRelProfileValid() {
+    const p = relProfileData();
+    relProfileNextBtn.disabled = !(p.lastName.trim() && p.firstName.trim());
+  }
+
+  if (relProfileForm) {
+    renderRelProfileForm();
+
+    ["lastName", "firstName", "patronymic", "occupation"].forEach((key) => {
+      const el = relProfileForm.elements[key];
+      if (!el) return;
+      el.addEventListener("input", () => {
+        relProfileData()[key] = el.value;
+        saveState();
+        checkRelProfileValid();
+      });
+    });
+
+    const birthDateEl = relProfileForm.elements.birthDate;
+    if (birthDateEl) {
+      birthDateEl.addEventListener("change", () => {
+        relProfileData().birthDate = birthDateEl.value;
+        saveState();
+      });
+    }
+
+    bindSingleSelect(
+      $("#relMaritalOptions"),
+      () => relProfileData().marital,
+      (v) => { relProfileData().marital = v; saveState(); }
+    );
+    bindSingleSelect(
+      $("#relKidsOptions"),
+      () => relProfileData().kids,
+      (v) => { relProfileData().kids = v; saveState(); }
+    );
+    bindSingleSelect(
+      $("#relIncomeOptions"),
+      () => relProfileData().income,
+      (v) => { relProfileData().income = v; saveState(); }
+    );
+
+    checkRelProfileValid();
+  }
+
+  if (relProfileNextBtn) {
+    relProfileNextBtn.addEventListener("click", () => {
+      if (relProfileNextBtn.disabled) return;
+      saveState();
+      // Дальнейшие экраны расследования «Отношения» пока не утверждены — временно возвращаем на карту направлений.
+      goTo("directions");
+    });
+  }
 
   /* ---------------- health screen ---------------- */
 
@@ -188,17 +285,6 @@
     return "Ты метишь в высшую лигу дохода. Такой код требует масштабного мышления: не работа за деньги, а системы и активы, которые работают на тебя.";
   }
 
-  const REL_TEXT = {
-    "Любовь": "Твой код настроен на глубокую эмоциональную близость. Ищи не идеального партнёра, а честный и открытый контакт — это твой настоящий ориентир.",
-    "Семья": "Ты стремишься к устойчивости и продолжению рода. Код показывает, что для тебя ценности и традиции важнее мимолётных впечатлений.",
-    "Дружба": "Твой код направлен на широкий, поддерживающий круг общения. Люди рядом с тобой — источник силы и энергии не меньше, чем романтика.",
-    "Партнёрство": "Ты ищешь равного союзника — в делах и в жизни. Код показывает потребность в балансе вклада и уважения, а не в романтике ради романтики."
-  };
-
-  function relResultText(choice) {
-    return REL_TEXT[choice] || "Твой код отношений ещё формируется.";
-  }
-
   const HEALTH_TEXT = {
     "Энергия": "больше устойчивой энергии в течение дня",
     "Иммунитет": "крепкий иммунитет и меньше сбоев в теле",
@@ -239,10 +325,6 @@
       const income = Number(moneySlider.value);
       state.answers.money = { income };
       summary = moneyResultText(income);
-    } else if (category === "relationships") {
-      if (!relChoice) return;
-      state.answers.relationships = { choice: relChoice };
-      summary = relResultText(relChoice);
     } else if (category === "health") {
       if (healthChoices.size === 0) return;
       const list = Array.from(healthChoices);
@@ -279,7 +361,41 @@
 
   const resultsBody = $("#resultsBody");
 
+  function relationshipsCardHtml() {
+    const meta = CATEGORY_META.relationships;
+    const inv = state.relInvestigation;
+    const started = !!(inv && (inv.situation.trim() || Object.values(inv.profile).some((v) => v && v.trim && v.trim())));
+
+    if (!started) {
+      return (
+        '<div class="result-card result-card--' + meta.cls + '">' +
+          '<div class="result-card__head">' +
+            '<span class="result-card__title">' + meta.label + "</span>" +
+            '<span class="result-card__badge">не пройдено</span>' +
+          "</div>" +
+          '<div class="result-card__locked">' +
+            "<p>Дело ещё не открыто.</p>" +
+            '<button class="chip-btn" type="button" data-goto-quiz="rel-case-intro">Пройти</button>' +
+          "</div>" +
+        "</div>"
+      );
+    }
+
+    return (
+      '<div class="result-card result-card--' + meta.cls + '">' +
+        '<div class="result-card__head">' +
+          '<span class="result-card__title">' + meta.label + "</span>" +
+          '<span class="result-card__badge">в процессе</span>' +
+        "</div>" +
+        '<p class="result-card__text">Расследование начато. Следующие материалы дела появятся здесь по мере прохождения.</p>' +
+        '<button class="chip-btn" type="button" data-goto-quiz="rel-case-intro">Продолжить</button>' +
+      "</div>"
+    );
+  }
+
   function categoryCardHtml(cat) {
+    if (cat === "relationships") return relationshipsCardHtml();
+
     const meta = CATEGORY_META[cat];
     const answer = state.answers[cat];
 
@@ -300,7 +416,6 @@
 
     let text = "";
     if (cat === "money") text = moneyResultText(answer.income);
-    else if (cat === "relationships") text = relResultText(answer.choice);
     else if (cat === "health") text = healthResultText(answer.focus);
     else if (cat === "family") text = answer.text;
 
@@ -395,10 +510,14 @@
     if (window.confirm("Сбросить все ответы, историю, профиль и данные регистрации? Это нельзя отменить.")) {
       state = defaultState();
       saveState();
-      relChoice = null;
       healthChoices = new Set();
-      renderRelSelection();
       renderHealthSelection();
+      if (relSituationInput) relSituationInput.value = "";
+      if (relProfileForm) {
+        renderRelProfileForm();
+        $$(".options--compact .option").forEach((btn) => btn.setAttribute("aria-checked", "false"));
+        checkRelProfileValid();
+      }
       moneySlider.value = 15000;
       updateMoneyDisplay();
       renderProfile();

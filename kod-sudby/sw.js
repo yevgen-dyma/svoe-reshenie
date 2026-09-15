@@ -1,4 +1,4 @@
-const CACHE_NAME = "kod-sudby-v3";
+const CACHE_NAME = "kod-sudby-v4";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -11,6 +11,7 @@ const APP_SHELL = [
   "./assets/scenes/directions-banner.svg",
   "./assets/scenes/money-scene.svg",
   "./assets/scenes/relationships-scene.svg",
+  "./assets/scenes/relationships-case-door.svg",
   "./assets/scenes/health-scene.svg",
   "./assets/scenes/family-scene.svg"
 ];
