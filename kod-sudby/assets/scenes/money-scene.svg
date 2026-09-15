@@ -1,0 +1,71 @@
+<svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+  <defs>
+    <linearGradient id="mn-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0c1a16"/>
+      <stop offset="70%" stop-color="#0a1210"/>
+      <stop offset="100%" stop-color="#08100d"/>
+    </linearGradient>
+    <linearGradient id="mn-glow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#35c48a" stop-opacity=".5"/>
+      <stop offset="100%" stop-color="#35c48a" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="mn-bldg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#16332a"/>
+      <stop offset="100%" stop-color="#0a1a15"/>
+    </linearGradient>
+    <filter id="mn-blur" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="10"/>
+    </filter>
+  </defs>
+
+  <rect width="400" height="260" fill="url(#mn-sky)"/>
+  <ellipse cx="200" cy="200" rx="220" ry="70" fill="url(#mn-glow)" filter="url(#mn-blur)"/>
+
+  <!-- skyline -->
+  <g fill="url(#mn-bldg)">
+    <rect x="10" y="140" width="34" height="90"/>
+    <rect x="50" y="110" width="26" height="120"/>
+    <rect x="82" y="150" width="30" height="80"/>
+    <rect x="118" y="90" width="30" height="140"/>
+    <rect x="154" y="130" width="24" height="100"/>
+    <rect x="238" y="120" width="26" height="110"/>
+    <rect x="270" y="150" width="30" height="80"/>
+    <rect x="306" y="95" width="30" height="135"/>
+    <rect x="342" y="135" width="26" height="95"/>
+    <rect x="374" y="150" width="20" height="80"/>
+  </g>
+  <path d="M178 230 V160 L192 150 L206 160 V230 Z" fill="url(#mn-bldg)"/>
+
+  <!-- windows -->
+  <g fill="#bff5da" opacity=".7">
+    <rect x="16" y="150" width="4" height="6"/>
+    <rect x="26" y="150" width="4" height="6"/>
+    <rect x="16" y="165" width="4" height="6"/>
+    <rect x="58" y="125" width="4" height="6"/>
+    <rect x="58" y="145" width="4" height="6"/>
+    <rect x="66" y="135" width="4" height="6"/>
+    <rect x="126" y="105" width="4" height="6"/>
+    <rect x="136" y="115" width="4" height="6"/>
+    <rect x="126" y="130" width="4" height="6"/>
+    <rect x="184" y="175" width="4" height="6"/>
+    <rect x="246" y="140" width="4" height="6"/>
+    <rect x="256" y="155" width="4" height="6"/>
+    <rect x="314" y="112" width="4" height="6"/>
+    <rect x="314" y="132" width="4" height="6"/>
+    <rect x="324" y="122" width="4" height="6"/>
+    <rect x="350" y="150" width="4" height="6"/>
+    <rect x="358" y="165" width="4" height="6"/>
+  </g>
+
+  <!-- ground -->
+  <rect x="0" y="230" width="400" height="30" fill="#08100d"/>
+  <ellipse cx="200" cy="232" rx="80" ry="6" fill="#35c48a" opacity=".18" filter="url(#mn-blur)"/>
+
+  <!-- figure -->
+  <g transform="translate(196,178)" fill="#04120c">
+    <circle cx="0" cy="0" r="8"/>
+    <path d="M-9 12 Q0 4 9 12 L11 56 Q0 62 -11 56 Z"/>
+    <rect x="-9" y="54" width="7" height="22" rx="3"/>
+    <rect x="2" y="54" width="7" height="22" rx="3"/>
+  </g>
+</svg>

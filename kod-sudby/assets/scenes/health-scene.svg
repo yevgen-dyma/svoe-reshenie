@@ -1,0 +1,49 @@
+<svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+  <defs>
+    <radialGradient id="hl-bg" cx="50%" cy="35%" r="75%">
+      <stop offset="0%" stop-color="#132a3a"/>
+      <stop offset="100%" stop-color="#081018"/>
+    </radialGradient>
+    <linearGradient id="hl-glow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#9fe0ff"/>
+      <stop offset="100%" stop-color="#2f8fc4"/>
+    </linearGradient>
+    <filter id="hl-blur" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="6"/>
+    </filter>
+  </defs>
+
+  <rect width="400" height="260" fill="url(#hl-bg)"/>
+
+  <!-- rings -->
+  <g stroke="#4fb4ec" opacity=".18" fill="none">
+    <circle cx="200" cy="128" r="95"/>
+    <circle cx="200" cy="128" r="70"/>
+  </g>
+
+  <!-- body silhouette -->
+  <g fill="none" stroke="url(#hl-glow)" stroke-width="2" opacity=".9">
+    <circle cx="200" cy="46" r="16"/>
+    <path d="M200 62 V150"/>
+    <path d="M200 78 Q168 80 158 110"/>
+    <path d="M200 78 Q232 80 242 110"/>
+    <path d="M158 110 L150 150"/>
+    <path d="M242 110 L250 150"/>
+    <path d="M200 150 Q176 152 170 236"/>
+    <path d="M200 150 Q224 152 230 236"/>
+    <ellipse cx="200" cy="100" rx="30" ry="38"/>
+  </g>
+
+  <!-- pulse / energy line -->
+  <path d="M60 210 H150 L165 186 L180 224 L195 196 L206 210 H340" fill="none" stroke="#bdeaff" stroke-width="2.4" opacity=".85" filter="url(#hl-blur)"/>
+  <path d="M60 210 H150 L165 186 L180 224 L195 196 L206 210 H340" fill="none" stroke="#eaf9ff" stroke-width="1.2"/>
+
+  <!-- glow nodes -->
+  <g fill="#9fe0ff">
+    <circle cx="200" cy="100" r="3.4" filter="url(#hl-blur)"/>
+    <circle cx="158" cy="110" r="2.6" filter="url(#hl-blur)"/>
+    <circle cx="242" cy="110" r="2.6" filter="url(#hl-blur)"/>
+    <circle cx="170" cy="236" r="2.6" filter="url(#hl-blur)"/>
+    <circle cx="230" cy="236" r="2.6" filter="url(#hl-blur)"/>
+  </g>
+</svg>

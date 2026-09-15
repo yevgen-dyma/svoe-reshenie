@@ -1,0 +1,52 @@
+<svg viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+  <defs>
+    <radialGradient id="db-bg" cx="50%" cy="0%" r="100%">
+      <stop offset="0%" stop-color="#1c1730"/>
+      <stop offset="100%" stop-color="#0b0a10"/>
+    </radialGradient>
+    <linearGradient id="db-money" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7be9b8"/>
+      <stop offset="100%" stop-color="#1f6f5c"/>
+    </linearGradient>
+    <linearGradient id="db-rel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffb0c4"/>
+      <stop offset="100%" stop-color="#a12b4c"/>
+    </linearGradient>
+    <linearGradient id="db-health" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#a6def7"/>
+      <stop offset="100%" stop-color="#1f6fa8"/>
+    </linearGradient>
+    <linearGradient id="db-family" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f1cd97"/>
+      <stop offset="100%" stop-color="#a97a3a"/>
+    </linearGradient>
+    <filter id="db-glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="7"/>
+    </filter>
+  </defs>
+
+  <rect width="400" height="240" fill="url(#db-bg)"/>
+
+  <g opacity=".9">
+    <!-- four arches -->
+    <g transform="translate(30,40)">
+      <ellipse cx="35" cy="150" rx="34" ry="8" fill="#35c48a" opacity=".22" filter="url(#db-glow)"/>
+      <path d="M2 170 V70 Q2 6 35 6 Q68 6 68 70 V170" fill="none" stroke="url(#db-money)" stroke-width="5"/>
+    </g>
+    <g transform="translate(130,20)">
+      <ellipse cx="35" cy="170" rx="34" ry="8" fill="#ff6f92" opacity=".22" filter="url(#db-glow)"/>
+      <path d="M2 190 V70 Q2 6 35 6 Q68 6 68 70 V190" fill="none" stroke="url(#db-rel)" stroke-width="5"/>
+    </g>
+    <g transform="translate(230,20)">
+      <ellipse cx="35" cy="170" rx="34" ry="8" fill="#4fb4ec" opacity=".22" filter="url(#db-glow)"/>
+      <path d="M2 190 V70 Q2 6 35 6 Q68 6 68 70 V190" fill="none" stroke="url(#db-health)" stroke-width="5"/>
+    </g>
+    <g transform="translate(330,40)">
+      <ellipse cx="35" cy="150" rx="34" ry="8" fill="#dba25a" opacity=".22" filter="url(#db-glow)"/>
+      <path d="M2 170 V70 Q2 6 35 6 Q68 6 68 70 V170" fill="none" stroke="url(#db-family)" stroke-width="5"/>
+    </g>
+  </g>
+
+  <!-- floor line -->
+  <rect x="0" y="210" width="400" height="1" fill="#e6ba6e" opacity=".18"/>
+</svg>
