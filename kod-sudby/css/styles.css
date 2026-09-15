@@ -85,8 +85,9 @@ button, .door, .option, .tabbar__item{
   transform: none;
   pointer-events: auto;
 }
-.screen--start{
-  padding-bottom: var(--safe-t);
+.screen--start,
+.screen--register{
+  padding-bottom: var(--safe-b);
 }
 
 .screen__body{
@@ -657,6 +658,54 @@ button, .door, .option, .tabbar__item{
   font-size: 15px;
 }
 .field__input:focus{ outline: 2px solid var(--gold); outline-offset: 1px; }
+.field__input.has-error{ border-color: var(--rel); }
+.field__label em{ font-style: normal; color: var(--ink-faint); font-weight: 400; text-transform: none; letter-spacing: 0; }
+.field__error{
+  min-height: 14px;
+  font-size: 12px;
+  color: var(--rel);
+}
+
+/* ============ Registration ============ */
+.register-title{
+  margin: 4px 0 4px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 28px;
+}
+.register-sub{
+  margin: 0 0 22px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-dim);
+}
+.register-form{
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.register-note{
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  line-height: 1.4;
+  background: rgba(230,186,110,.12);
+  color: var(--gold);
+  border: 1px solid rgba(230,186,110,.35);
+}
+.register-note.is-error{
+  background: rgba(255,111,146,.12);
+  color: #ffb3c4;
+  border-color: rgba(255,111,146,.4);
+}
+.register-privacy{
+  margin: 2px 0 0;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--ink-faint);
+  text-align: center;
+}
 
 .progress-card{
   padding: 16px 18px;

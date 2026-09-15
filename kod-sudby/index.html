@@ -28,8 +28,54 @@
 
 <div class="app" id="app">
 
+  <!-- ============ REGISTRATION ============ -->
+  <section class="screen screen--register is-active" data-screen="register" aria-label="Регистрация">
+    <div class="scene scene--banner" aria-hidden="true">
+      <img src="assets/scenes/start-door.svg" alt="" width="400" height="560">
+      <div class="scene__fade"></div>
+    </div>
+
+    <div class="screen__body register-body">
+      <p class="eyebrow">— шаг 1 —</p>
+      <h2 class="register-title">Регистрация</h2>
+      <p class="register-sub">Оставь свои данные, чтобы открыть доступ к опроснику</p>
+
+      <form class="register-form" id="registerForm" novalidate>
+        <label class="field">
+          <span class="field__label">Фамилия</span>
+          <input class="field__input" name="lastName" type="text" autocomplete="family-name" required>
+          <span class="field__error" data-error-for="lastName"></span>
+        </label>
+        <label class="field">
+          <span class="field__label">Имя</span>
+          <input class="field__input" name="firstName" type="text" autocomplete="given-name" required>
+          <span class="field__error" data-error-for="firstName"></span>
+        </label>
+        <label class="field">
+          <span class="field__label">Отчество <em>(необязательно)</em></span>
+          <input class="field__input" name="patronymic" type="text" autocomplete="additional-name">
+        </label>
+        <label class="field">
+          <span class="field__label">Телефон</span>
+          <input class="field__input" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+7 900 000-00-00" required>
+          <span class="field__error" data-error-for="phone"></span>
+        </label>
+        <label class="field">
+          <span class="field__label">Email</span>
+          <input class="field__input" name="email" type="email" autocomplete="email" inputmode="email" required>
+          <span class="field__error" data-error-for="email"></span>
+        </label>
+
+        <p class="register-note" id="registerNote" role="status" aria-live="polite" hidden></p>
+
+        <button class="btn btn--gold btn--lg" type="submit" id="registerSubmit">Продолжить</button>
+        <p class="register-privacy">Нажимая «Продолжить», ты соглашаешься на обработку персональных данных.</p>
+      </form>
+    </div>
+  </section>
+
   <!-- ============ START ============ -->
-  <section class="screen screen--start is-active" data-screen="start" aria-label="Заставка">
+  <section class="screen screen--start" data-screen="start" aria-label="Заставка">
     <div class="start-bg" aria-hidden="true">
       <img class="start-bg__img" src="assets/scenes/start-door.svg" alt="" width="400" height="560">
       <div class="start-bg__fade"></div>

@@ -1,4 +1,4 @@
-const CACHE_NAME = "kod-sudby-v2";
+const CACHE_NAME = "kod-sudby-v3";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -33,6 +33,7 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
+  if (new URL(event.request.url).pathname.startsWith("/api/")) return;
   event.respondWith(
     caches.match(event.request).then((cached) => {
       const network = fetch(event.request)

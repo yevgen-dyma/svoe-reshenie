@@ -18,6 +18,7 @@
   function defaultState() {
     return {
       profile: { name: "" },
+      registration: null,
       answers: {},
       history: []
     };
@@ -87,7 +88,7 @@
     screens.forEach((s) => s.classList.toggle("is-active", s.dataset.screen === name));
     tabItems.forEach((t) => t.classList.toggle("is-active", t.dataset.nav === name));
 
-    if (name !== "start") {
+    if (name !== "start" && name !== "register") {
       document.body.classList.add("app-started");
     }
 
@@ -391,7 +392,7 @@
   });
 
   resetAllBtn.addEventListener("click", () => {
-    if (window.confirm("Сбросить все ответы, историю и профиль? Это нельзя отменить.")) {
+    if (window.confirm("Сбросить все ответы, историю, профиль и данные регистрации? Это нельзя отменить.")) {
       state = defaultState();
       saveState();
       relChoice = null;
@@ -401,7 +402,85 @@
       moneySlider.value = 15000;
       updateMoneyDisplay();
       renderProfile();
-      goTo("directions");
+      registerForm.reset();
+      clearFieldErrors();
+      setRegisterNote("", false);
+      goTo("register");
+    }
+  });
+
+  /* ---------------- registration screen ---------------- */
+
+  const registerForm = $("#registerForm");
+  const registerSubmitBtn = $("#registerSubmit");
+  const registerNote = $("#registerNote");
+
+  function setFieldError(name, msg) {
+    const el = registerForm.querySelector('[data-error-for="' + name + '"]');
+    if (el) el.textContent = msg || "";
+    const input = registerForm.elements[name];
+    if (input) input.classList.toggle("has-error", !!msg);
+  }
+
+  function clearFieldErrors() {
+    ["lastName", "firstName", "phone", "email"].forEach((n) => setFieldError(n, ""));
+  }
+
+  function setRegisterNote(msg, isError) {
+    registerNote.textContent = msg || "";
+    registerNote.hidden = !msg;
+    registerNote.classList.toggle("is-error", !!isError);
+  }
+
+  registerForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    clearFieldErrors();
+    setRegisterNote("", false);
+
+    const data = {
+      lastName: registerForm.elements.lastName.value.trim(),
+      firstName: registerForm.elements.firstName.value.trim(),
+      patronymic: registerForm.elements.patronymic.value.trim(),
+      phone: registerForm.elements.phone.value.trim(),
+      email: registerForm.elements.email.value.trim()
+    };
+
+    let hasError = false;
+    if (!data.lastName) { setFieldError("lastName", "Укажи фамилию"); hasError = true; }
+    if (!data.firstName) { setFieldError("firstName", "Укажи имя"); hasError = true; }
+    if (data.phone.replace(/\D/g, "").length < 7) { setFieldError("phone", "Укажи корректный телефон"); hasError = true; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) { setFieldError("email", "Укажи корректный email"); hasError = true; }
+    if (hasError) return;
+
+    registerSubmitBtn.disabled = true;
+    registerSubmitBtn.textContent = "Сохраняем…";
+
+    try {
+      const res = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+      const json = await res.json().catch(() => null);
+
+      if (!res.ok || !json || !json.ok) {
+        if (json && json.errors) {
+          Object.keys(json.errors).forEach((k) => setFieldError(k, json.errors[k]));
+        }
+        setRegisterNote((json && json.error) || "Не удалось сохранить данные. Попробуй ещё раз.", true);
+        registerSubmitBtn.disabled = false;
+        registerSubmitBtn.textContent = "Продолжить";
+        return;
+      }
+
+      state.registration = Object.assign({}, data, { id: json.id, registeredAt: Date.now() });
+      saveState();
+      vibrate(10);
+      goTo("start");
+    } catch (err) {
+      setRegisterNote("Нет связи с сервером. Проверь подключение и попробуй ещё раз.", true);
+      registerSubmitBtn.disabled = false;
+      registerSubmitBtn.textContent = "Продолжить";
     }
   });
 
@@ -427,7 +506,7 @@
   /* ---------------- init ---------------- */
 
   renderProfile();
-  goTo("start", { silent: true });
+  goTo(state.registration ? "start" : "register", { silent: true });
 
   /* ---------------- service worker (progressive enhancement) ---------------- */
 
