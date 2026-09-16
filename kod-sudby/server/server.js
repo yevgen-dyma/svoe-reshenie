@@ -3,33 +3,95 @@
 const http = require("node:http");
 const fs = require("node:fs");
 const path = require("node:path");
-const { DatabaseSync } = require("node:sqlite");
 
 const PORT = process.env.PORT || 3000;
 const ROOT_DIR = path.join(__dirname, "..");
 const DATA_DIR = path.join(__dirname, "data");
-const DB_PATH = path.join(DATA_DIR, "registrations.db");
+const CSV_PATH = path.join(DATA_DIR, "registrations.csv");
 const ADMIN_KEY = process.env.ADMIN_KEY || "";
+
+const CSV_COLUMNS = ["id", "last_name", "first_name", "patronymic", "phone", "email", "created_at"];
 
 fs.mkdirSync(DATA_DIR, { recursive: true });
 
-const db = new DatabaseSync(DB_PATH);
-db.exec(`
-  CREATE TABLE IF NOT EXISTS registrations (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    last_name TEXT NOT NULL,
-    first_name TEXT NOT NULL,
-    patronymic TEXT,
-    phone TEXT NOT NULL,
-    email TEXT NOT NULL,
-    created_at TEXT NOT NULL DEFAULT (datetime('now'))
-  )
-`);
+function csvEscape(value) {
+  const s = String(value == null ? "" : value);
+  if (/[",\n\r]/.test(s)) {
+    return '"' + s.replace(/"/g, '""') + '"';
+  }
+  return s;
+}
 
-const insertStmt = db.prepare(
-  "INSERT INTO registrations (last_name, first_name, patronymic, phone, email) VALUES (?, ?, ?, ?, ?)"
-);
-const listStmt = db.prepare("SELECT * FROM registrations ORDER BY id DESC");
+function csvRow(values) {
+  return values.map(csvEscape).join(",") + "\n";
+}
+
+// Parses the whole CSV file content into an array of field arrays, handling
+// quoted fields that may contain commas or embedded newlines.
+function parseCsv(text) {
+  const rows = [];
+  let row = [];
+  let field = "";
+  let inQuotes = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQuotes) {
+      if (c === '"') {
+        if (text[i + 1] === '"') { field += '"'; i++; }
+        else { inQuotes = false; }
+      } else {
+        field += c;
+      }
+    } else if (c === '"') {
+      inQuotes = true;
+    } else if (c === ",") {
+      row.push(field);
+      field = "";
+    } else if (c === "\n" || c === "\r") {
+      if (c === "\r" && text[i + 1] === "\n") i++;
+      row.push(field);
+      field = "";
+      if (row.length > 1 || row[0] !== "") rows.push(row);
+      row = [];
+    } else {
+      field += c;
+    }
+  }
+  if (field !== "" || row.length) {
+    row.push(field);
+    if (row.length > 1 || row[0] !== "") rows.push(row);
+  }
+  return rows;
+}
+
+if (!fs.existsSync(CSV_PATH)) {
+  fs.writeFileSync(CSV_PATH, csvRow(CSV_COLUMNS));
+}
+
+function readRegistrations() {
+  const text = fs.readFileSync(CSV_PATH, "utf8");
+  const rows = parseCsv(text);
+  if (rows.length === 0) return [];
+  const [header, ...dataRows] = rows;
+  return dataRows.map((cols) => {
+    const rec = {};
+    header.forEach((key, i) => { rec[key] = cols[i] !== undefined ? cols[i] : ""; });
+    rec.id = Number(rec.id);
+    return rec;
+  });
+}
+
+let nextId = (() => {
+  const rows = readRegistrations();
+  return rows.reduce((max, r) => Math.max(max, r.id || 0), 0) + 1;
+})();
+
+function insertRegistration(lastName, firstName, patronymic, phone, email) {
+  const id = nextId++;
+  const createdAt = new Date().toISOString();
+  fs.appendFileSync(CSV_PATH, csvRow([id, lastName, firstName, patronymic || "", phone, email, createdAt]));
+  return id;
+}
 
 const MIME = {
   ".html": "text/html; charset=utf-8",
@@ -103,8 +165,8 @@ async function handleRegister(req, res) {
   }
 
   try {
-    const info = insertStmt.run(lastName, firstName, patronymic || null, phone, email);
-    return sendJson(res, 201, { ok: true, id: Number(info.lastInsertRowid) });
+    const id = insertRegistration(lastName, firstName, patronymic, phone, email);
+    return sendJson(res, 201, { ok: true, id });
   } catch (e) {
     return sendJson(res, 500, { ok: false, error: "Не удалось сохранить запись" });
   }
@@ -114,7 +176,7 @@ function handleAdminList(req, res, urlObj) {
   if (!ADMIN_KEY || urlObj.searchParams.get("key") !== ADMIN_KEY) {
     return sendJson(res, 401, { ok: false, error: "Unauthorized" });
   }
-  const rows = listStmt.all();
+  const rows = readRegistrations().sort((a, b) => b.id - a.id);
   return sendJson(res, 200, { ok: true, count: rows.length, rows });
 }
 
@@ -170,7 +232,7 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, () => {
   console.log(`Код судьбы: сервер запущен на http://localhost:${PORT}`);
-  console.log(`База данных: ${DB_PATH}`);
+  console.log(`Файл регистраций (CSV): ${CSV_PATH}`);
   if (ADMIN_KEY) {
     console.log(`Просмотр заявок: http://localhost:${PORT}/api/registrations?key=${ADMIN_KEY}`);
   } else {
