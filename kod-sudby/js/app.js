@@ -22,7 +22,7 @@
       answers: {},
       history: [],
       relInvestigation: {
-        situation: "",
+        problemDescription: "",
         profile: {
           lastName: "",
           firstName: "",
@@ -161,14 +161,22 @@
     render();
   }
 
-  // — case file cover: "Старт" is a plain [data-open] button, handled by the global click binding —
+  // — screen 1: "Старт" is a plain [data-open] hit-area, handled by the global click binding —
 
-  // — question 1: free text, saved as the user types —
+  // — screen 2: free text over the approved image, autosaved as the user types —
   const relSituationInput = $("#relSituation");
+  const relSituationCounter = $("#relSituationCounter");
+
+  function updateRelSituationCounter() {
+    if (relSituationCounter) relSituationCounter.textContent = relSituationInput.value.length + "/1000";
+  }
+
   if (relSituationInput) {
-    relSituationInput.value = state.relInvestigation.situation || "";
+    relSituationInput.value = state.relInvestigation.problemDescription || "";
+    updateRelSituationCounter();
     relSituationInput.addEventListener("input", () => {
-      state.relInvestigation.situation = relSituationInput.value;
+      state.relInvestigation.problemDescription = relSituationInput.value;
+      updateRelSituationCounter();
       saveState();
     });
   }
@@ -364,7 +372,7 @@
   function relationshipsCardHtml() {
     const meta = CATEGORY_META.relationships;
     const inv = state.relInvestigation;
-    const started = !!(inv && (inv.situation.trim() || Object.values(inv.profile).some((v) => v && v.trim && v.trim())));
+    const started = !!(inv && (inv.problemDescription.trim() || Object.values(inv.profile).some((v) => v && v.trim && v.trim())));
 
     if (!started) {
       return (
@@ -512,7 +520,7 @@
       saveState();
       healthChoices = new Set();
       renderHealthSelection();
-      if (relSituationInput) relSituationInput.value = "";
+      if (relSituationInput) { relSituationInput.value = ""; updateRelSituationCounter(); }
       if (relProfileForm) {
         renderRelProfileForm();
         $$(".options--compact .option").forEach((btn) => btn.setAttribute("aria-checked", "false"));

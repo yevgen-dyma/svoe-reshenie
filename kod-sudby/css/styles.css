@@ -436,6 +436,87 @@ button, .door, .option, .tabbar__item{
   opacity: .85;
 }
 
+/* ============ Relationships: approved reference screenshots ============ */
+.screen--relshot{
+  padding-bottom: calc(var(--tabbar-h) + var(--safe-b));
+}
+.rel-shot{
+  position: relative;
+  width: 100%;
+  line-height: 0;
+}
+.rel-shot img{
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.rel-hit{
+  position: absolute;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.rel-hit:active{ filter: brightness(1.15); }
+.rel-hit:focus-visible{
+  outline: 2px solid rgba(255,255,255,.65);
+  outline-offset: 2px;
+}
+
+.rel-hit--s1-start{
+  left: 20.9%; top: 70.2%;
+  width: 57.4%; height: 8.46%;
+  border-radius: 999px;
+}
+
+.rel-hit--s2-back{
+  left: .98%; top: .33%;
+  width: 10.25%; height: 6.18%;
+  border-radius: 14px;
+}
+.rel-hit--s2-next{
+  left: 5.27%; top: 76.3%;
+  width: 89.45%; height: 8.01%;
+  border-radius: 999px;
+}
+.rel-hit--s2-skip{
+  left: 34.18%; top: 84.96%;
+  width: 32.23%; height: 3.58%;
+}
+
+.rel-q-box{
+  position: absolute;
+  left: 5.86%; top: 44.14%;
+  width: 88.18%; height: 14.26%;
+}
+.rel-q-box textarea{
+  display: block;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  background: rgb(18,17,24);
+  border: 1px solid rgba(165,155,185,.35);
+  border-radius: 14px;
+  color: #f2eef7;
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  padding: 3.5% 4% 8% 4%;
+  resize: none;
+}
+.rel-q-box textarea::placeholder{ color: rgba(200,195,215,.55); }
+.rel-q-box textarea:focus{ outline: 2px solid var(--rel); outline-offset: 1px; }
+.rel-q-counter{
+  position: absolute;
+  right: 4%;
+  bottom: 3.2%;
+  font-size: 12.5px;
+  color: rgba(200,195,215,.75);
+  pointer-events: none;
+}
+
 /* ============ Relationships: case file cover ============ */
 .screen--case{
   background: var(--bg);

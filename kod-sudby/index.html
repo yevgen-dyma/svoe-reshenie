@@ -173,83 +173,28 @@
     </div>
   </section>
 
-  <!-- ============ RELATIONSHIPS: CASE FILE COVER ============ -->
-  <section class="screen screen--case theme-rel" data-screen="rel-case-intro" aria-label="Дело «Отношения»">
-    <div class="scene scene--case" aria-hidden="true">
-      <img src="assets/scenes/relationships-case-door.svg" alt="" width="400" height="520">
-      <div class="scene__fade"></div>
-    </div>
-    <button class="iconbtn case-back" type="button" data-back="directions" aria-label="Назад">
-      <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </button>
-
-    <div class="screen__body case-body">
-      <p class="eyebrow">— опросник —</p>
-      <h1 class="case-title">Взломай<br><span class="case-title__gold">код судьбы</span></h1>
-      <h2 class="case-category"><span class="case-category__line case-category__line--l"></span><span class="case-category__text">Отношения</span><span class="case-category__line case-category__line--r"></span></h2>
-      <p class="case-subtitle">Глубже, чем кажется</p>
-
-      <div class="case-lists">
-        <ul class="case-list">
-          <li>Любовь</li>
-          <li>Понимание</li>
-          <li>Гармония</li>
-          <li>Настоящие отношения</li>
-        </ul>
-        <ul class="case-list case-list--alt">
-          <li>Разбери свои сценарии</li>
-          <li>Освободись от прошлого</li>
-          <li>Создай будущее в любви</li>
-        </ul>
-      </div>
-
-      <p class="case-tagline">Твоя жизнь — это код.<br>Узнай его.</p>
-
-      <button class="btn btn--gold btn--lg case-cta" type="button" data-open="rel-question-1">
-        <span>Старт</span>
-        <svg viewBox="0 0 24 24" width="18" height="18"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-      <p class="case-hint">Ты готов(а) узнать правду?</p>
-
-      <div class="case-divider"></div>
-
-      <div class="case-badges">
-        <div class="case-badge">
-          <svg viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-3.4 8.4-8 9-4.6-.6-8-4-8-9V7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <span>Конфиденциально</span>
-        </div>
-        <div class="case-badge">
-          <svg viewBox="0 0 24 24"><path d="M9 3a4 4 0 0 0-4 4c0 1-1 1.4-1 2.6C4 11 5 11.4 5 12.6 5 14 4 14.4 4 16a4 4 0 0 0 4 4h1" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M15 3a4 4 0 0 1 4 4c0 1 1 1.4 1 2.6 0 1.4-1 1.8-1 3 0 1.4 1 1.8 1 3.4a4 4 0 0 1-4 4h-1" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M9 3v18M15 3v18" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
-          <span>Научный подход</span>
-        </div>
-        <div class="case-badge">
-          <svg viewBox="0 0 24 24"><path d="M3 9l4-6h10l4 6-9 12z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M3 9h18M9 3l3 6 3-6M12 9v12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
-          <span>Реальные результаты</span>
-        </div>
-      </div>
+  <!-- ============ RELATIONSHIPS: SCREEN 1 — approved reference image ============ -->
+  <section class="screen screen--relshot theme-rel" data-screen="rel-case-intro" aria-label="Дело «Отношения»">
+    <div class="rel-shot">
+      <img src="assets/reference/relationships/01-relationships-start.png" alt="Взломай код судьбы — Отношения" width="1024" height="1536">
+      <button class="rel-hit rel-hit--s1-start" type="button" data-open="rel-question-1" aria-label="Старт"></button>
     </div>
   </section>
 
-  <!-- ============ RELATIONSHIPS: QUESTION 1 (free text) ============ -->
-  <section class="screen screen--quiz theme-rel" data-screen="rel-question-1" aria-label="Отношения — вопрос 1">
-    <header class="topbar">
-      <button class="iconbtn" type="button" data-back="rel-case-intro" aria-label="Назад">
-        <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-      <h2 class="topbar__title">Отношения</h2>
-      <span class="iconbtn iconbtn--ghost" aria-hidden="true"></span>
-    </header>
+  <!-- ============ RELATIONSHIPS: SCREEN 2 — approved reference image ============ -->
+  <section class="screen screen--relshot theme-rel" data-screen="rel-question-1" aria-label="Отношения — вопрос 1">
+    <div class="rel-shot">
+      <img src="assets/reference/relationships/02-relationships-problem.png" alt="Что именно у вас не получается?" width="1024" height="1536">
 
-    <div class="screen__body">
-      <p class="case-step">Дело №1</p>
-      <p class="question">Что именно у вас не получается?</p>
-      <p class="question-hint">Опиши своими словами — чем подробнее, тем точнее будет разбор</p>
+      <button class="rel-hit rel-hit--s2-back" type="button" data-back="rel-case-intro" aria-label="Назад"></button>
 
-      <textarea class="textarea" id="relSituation" rows="7" placeholder="Например: постоянно ссоримся из-за мелочей, партнёр отдаляется, не могу найти отношения дольше нескольких месяцев…"></textarea>
-    </div>
+      <div class="rel-q-box">
+        <textarea id="relSituation" maxlength="1000" placeholder="Напишите здесь…" aria-label="Что именно у вас не получается?"></textarea>
+        <span class="rel-q-counter" id="relSituationCounter">0/1000</span>
+      </div>
 
-    <div class="screen__footer">
-      <button class="btn btn--primary btn--lg" type="button" data-open="rel-profile">Далее</button>
+      <button class="rel-hit rel-hit--s2-next" type="button" data-open="rel-profile" aria-label="Далее"></button>
+      <button class="rel-hit rel-hit--s2-skip" type="button" data-open="rel-profile" aria-label="Пропустить вопрос"></button>
     </div>
   </section>
 
