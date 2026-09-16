@@ -657,6 +657,63 @@ button, .door, .option, .tabbar__item{
   width: 88.18%; height: 5.86%;
 }
 
+/* ============ Relationships: screen 5 — goal direction rows over reference image ============ */
+.rel-hit--s5-back{
+  left: 1.46%; top: .65%;
+  width: 9.77%; height: 5.86%;
+  border-radius: 14px;
+}
+.rel-row5{ border-radius: 14px; left: 5.96%; width: 88.09%; }
+.rel-row5--0{ top: 23.24%; height: 4.82%; }
+.rel-row5--1{ top: 28.58%; height: 4.82%; }
+.rel-row5--2{ top: 33.85%; height: 4.88%; }
+.rel-row5--3{ top: 39.19%; height: 4.88%; }
+.rel-row5--4{ top: 44.53%; height: 4.88%; }
+.rel-row5--5{ top: 49.93%; height: 4.88%; }
+.rel-row5--6{ top: 55.34%; height: 4.95%; }
+.rel-row5--7{ top: 60.74%; height: 4.95%; }
+.rel-row5--8{ top: 66.15%; height: 4.95%; }
+.rel-row5--9{ top: 71.55%; height: 4.95%; }
+.rel-row5--10{ top: 77.02%; height: 4.95%; }
+.rel-row5[aria-checked="true"]{
+  box-shadow: 0 0 0 2px var(--rel) inset, 0 0 16px rgba(255,111,146,.45);
+  border-radius: 14px;
+}
+
+.rel-radio5{
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  box-sizing: border-box;
+  left: 8.98%; width: 2.93%; height: 1.89%;
+}
+.rel-radio5--0{ top: 24.74%; }
+.rel-radio5--1{ top: 30.08%; }
+.rel-radio5--2{ top: 35.35%; }
+.rel-radio5--3{ top: 40.69%; }
+.rel-radio5--4{ top: 46.03%; }
+.rel-radio5--5{ top: 51.43%; }
+.rel-radio5--6{ top: 56.84%; }
+.rel-radio5--7{ top: 62.24%; }
+.rel-radio5--8{ top: 67.64%; }
+.rel-radio5--9{ top: 73.05%; }
+.rel-radio5--10{ top: 78.52%; }
+.rel-radio5.is-checked{
+  box-shadow: 0 0 10px rgba(255,111,146,.7);
+}
+.rel-radio5.is-checked::after{
+  content: "";
+  position: absolute;
+  inset: 24%;
+  border-radius: 50%;
+  background: var(--rel);
+}
+
+.rel-hit--s5-next{
+  left: 5.66%; top: 83.53%;
+  width: 88.67%; height: 6.12%;
+}
+
 .rel-other-wrap{
   padding: 16px 20px calc(var(--tabbar-h) + var(--safe-b) + 16px);
 }

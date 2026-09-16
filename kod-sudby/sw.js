@@ -1,4 +1,4 @@
-const CACHE_NAME = "kod-sudby-v7";
+const CACHE_NAME = "kod-sudby-v8";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -17,7 +17,8 @@ const APP_SHELL = [
   "./assets/reference/relationships/01-relationships-start.png",
   "./assets/reference/relationships/02-relationships-problem.png",
   "./assets/reference/relationships/03-relationships-profile.png",
-  "./assets/reference/relationships/04-relationships-current-situation.png"
+  "./assets/reference/relationships/04-relationships-current-situation.png",
+  "./assets/reference/relationships/05-relationships-goal-direction.png"
 ];
 
 self.addEventListener("install", (event) => {

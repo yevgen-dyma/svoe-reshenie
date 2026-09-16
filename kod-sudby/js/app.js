@@ -34,7 +34,9 @@
           income: ""
         },
         situationCategory: "",
-        situationCategoryOther: ""
+        situationCategoryOther: "",
+        goalDirection: "",
+        goalDirectionOther: ""
       }
     };
   }
@@ -296,6 +298,52 @@
   const relSituationNextBtn = $("#relSituationNext");
   if (relSituationNextBtn) {
     relSituationNextBtn.addEventListener("click", () => {
+      saveState();
+      goTo("rel-goal");
+    });
+  }
+
+  // — screen 5: single-select goal-direction row, "Другое" reveals a real text field —
+  const relRows5 = $$(".rel-row5");
+  const relGoalOtherWrap = $("#relGoalOtherWrap");
+  const relGoalOtherInput = $("#relGoalOtherInput");
+
+  function renderRelGoal() {
+    const selected = state.relInvestigation.goalDirection;
+    relRows5.forEach((row, i) => {
+      const on = row.dataset.value === selected && selected !== "";
+      row.setAttribute("aria-checked", on ? "true" : "false");
+      const radio = $(".rel-radio5--" + i);
+      if (radio) radio.classList.toggle("is-checked", on);
+    });
+
+    const otherRow = relRows5.find((r) => r.dataset.other === "true");
+    const otherOn = otherRow && otherRow.getAttribute("aria-checked") === "true";
+    if (relGoalOtherWrap) relGoalOtherWrap.hidden = !otherOn;
+  }
+
+  if (relGoalOtherInput) {
+    relGoalOtherInput.value = state.relInvestigation.goalDirectionOther || "";
+    relGoalOtherInput.addEventListener("input", () => {
+      state.relInvestigation.goalDirectionOther = relGoalOtherInput.value;
+      saveState();
+    });
+  }
+
+  relRows5.forEach((row) => {
+    row.addEventListener("click", () => {
+      state.relInvestigation.goalDirection = row.dataset.value;
+      saveState();
+      renderRelGoal();
+      vibrate(6);
+    });
+  });
+
+  renderRelGoal();
+
+  const relGoalNextBtn = $("#relGoalNext");
+  if (relGoalNextBtn) {
+    relGoalNextBtn.addEventListener("click", () => {
       saveState();
       goTo("directions");
     });
@@ -578,6 +626,8 @@
       }
       if (relOtherInput) relOtherInput.value = "";
       renderRelSituation();
+      if (relGoalOtherInput) relGoalOtherInput.value = "";
+      renderRelGoal();
       moneySlider.value = 15000;
       updateMoneyDisplay();
       renderProfile();
