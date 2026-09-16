@@ -543,6 +543,8 @@ button, .door, .option, .tabbar__item{
 }
 .rel-p-field::placeholder{ color: rgba(190,185,205,.5); }
 .rel-p-field:focus{ outline: 2px solid var(--rel); outline-offset: 1px; }
+.rel-p-field{ color-scheme: dark; }
+.rel-p-field::-webkit-calendar-picker-indicator{ filter: invert(1) brightness(1.4); cursor: pointer; }
 
 .rel-p-firstname{ left: 14.45%; top: 35.81%; width: 54.98%; height: 2.73%; }
 .rel-p-lastname{ left: 14.45%; top: 42.06%; width: 54.98%; height: 2.80%; }
@@ -575,10 +577,12 @@ button, .door, .option, .tabbar__item{
   border-radius: 10px;
   color: #ece8f2;
   font-family: var(--font-body);
-  font-size: 7.6px;
+  font-size: 8.2px;
   font-weight: 700;
-  line-height: 1.15;
-  padding: 0 1%;
+  line-height: 1.05;
+  padding: 0 0.5%;
+  letter-spacing: -.15px;
+  word-break: break-word;
 }
 .option.rel-p-chip[aria-checked="true"]{
   background: rgb(23,13,19);
