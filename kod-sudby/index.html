@@ -198,79 +198,94 @@
     </div>
   </section>
 
-  <!-- ============ RELATIONSHIPS: GET ACQUAINTED ============ -->
-  <section class="screen screen--quiz theme-rel" data-screen="rel-profile" aria-label="Отношения — знакомство">
-    <header class="topbar">
-      <button class="iconbtn" type="button" data-back="rel-question-1" aria-label="Назад">
-        <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-      <h2 class="topbar__title">Знакомство</h2>
-      <span class="iconbtn iconbtn--ghost" aria-hidden="true"></span>
-    </header>
+  <!-- ============ RELATIONSHIPS: SCREEN 3 — approved reference image ============ -->
+  <section class="screen screen--relshot theme-rel" data-screen="rel-profile" aria-label="Отношения — знакомство">
+    <div class="rel-shot">
+      <img src="assets/reference/relationships/03-relationships-profile.png" alt="Расскажите немного о себе" width="1024" height="1536">
 
-    <div class="screen__body">
-      <p class="case-step">Дело №1</p>
-      <p class="question">Давайте познакомимся</p>
-      <p class="question-hint">Расскажите немного о себе</p>
+      <button class="rel-hit rel-hit--s3-back" type="button" data-back="rel-question-1" aria-label="Назад"></button>
 
-      <form class="register-form rel-profile-form" id="relProfileForm" novalidate>
-        <label class="field">
-          <span class="field__label">Фамилия</span>
-          <input class="field__input" name="lastName" type="text" autocomplete="family-name">
-        </label>
-        <label class="field">
-          <span class="field__label">Имя</span>
-          <input class="field__input" name="firstName" type="text" autocomplete="given-name">
-        </label>
-        <label class="field">
-          <span class="field__label">Отчество <em>(необязательно)</em></span>
-          <input class="field__input" name="patronymic" type="text" autocomplete="additional-name">
-        </label>
-        <label class="field">
-          <span class="field__label">Дата рождения</span>
-          <input class="field__input" name="birthDate" type="date" autocomplete="bday">
-        </label>
+      <form class="rel-p-form" id="relProfileForm" novalidate>
+        <input class="rel-p-field rel-p-firstname" name="firstName" type="text" autocomplete="given-name" placeholder="Введите имя" aria-label="Имя">
+        <input class="rel-p-field rel-p-lastname" name="lastName" type="text" autocomplete="family-name" placeholder="Введите фамилию" aria-label="Фамилия">
+        <input class="rel-p-field rel-p-patronymic" name="patronymic" type="text" autocomplete="additional-name" placeholder="Введите отчество" aria-label="Отчество">
+        <input class="rel-p-field rel-p-birthdate" name="birthDate" type="date" autocomplete="bday" aria-label="Дата рождения">
 
-        <div class="field">
-          <span class="field__label">Семейное положение</span>
-          <div class="options options--compact" id="relMaritalOptions" role="radiogroup" aria-label="Семейное положение">
-            <button class="option" type="button" role="radio" aria-checked="false" data-value="Не в отношениях">Не в отношениях</button>
-            <button class="option" type="button" role="radio" aria-checked="false" data-value="Встречаюсь">Встречаюсь</button>
-            <button class="option" type="button" role="radio" aria-checked="false" data-value="Замужем / женат">Замужем / женат</button>
-            <button class="option" type="button" role="radio" aria-checked="false" data-value="Разведён(а)">Разведён(а)</button>
-            <button class="option" type="button" role="radio" aria-checked="false" data-value="Вдовец / вдова">Вдовец / вдова</button>
-          </div>
+        <select class="rel-p-field rel-p-occupation" name="occupation" aria-label="Чем вы сейчас занимаетесь?">
+          <option value="" disabled selected hidden>Выберите вариант</option>
+          <option value="Учусь">Учусь</option>
+          <option value="Работаю по найму">Работаю по найму</option>
+          <option value="Предприниматель / фриланс">Предприниматель / фриланс</option>
+          <option value="В декрете">В декрете</option>
+          <option value="В поиске работы">В поиске работы</option>
+          <option value="Не работаю">Не работаю</option>
+          <option value="Другое">Другое</option>
+        </select>
+
+        <div class="options rel-p-chips rel-p-marital" id="relMaritalOptions" role="radiogroup" aria-label="Семейное положение">
+          <button class="option rel-p-chip rel-p-marital-0" type="button" role="radio" aria-checked="false" data-value="Не женат / не замужем">Не женат / не замужем</button>
+          <button class="option rel-p-chip rel-p-marital-1" type="button" role="radio" aria-checked="false" data-value="В отношениях">В отношениях</button>
+          <button class="option rel-p-chip rel-p-marital-2" type="button" role="radio" aria-checked="false" data-value="Женат / замужем">Женат / замужем</button>
+          <button class="option rel-p-chip rel-p-marital-3" type="button" role="radio" aria-checked="false" data-value="Разведён(а)">Разведён(а)</button>
+          <button class="option rel-p-chip rel-p-marital-4" type="button" role="radio" aria-checked="false" data-value="Другое">Другое</button>
         </div>
 
-        <div class="field">
-          <span class="field__label">Дети</span>
-          <div class="options options--compact" id="relKidsOptions" role="radiogroup" aria-label="Количество детей">
-            <button class="option" type="button" role="radio" aria-checked="false" data-value="Нет детей">Нет</button>
-            <button class="option" type="button" role="radio" aria-checked="false" data-value="1">1</button>
-            <button class="option" type="button" role="radio" aria-checked="false" data-value="2">2</button>
-            <button class="option" type="button" role="radio" aria-checked="false" data-value="3+">3+</button>
-          </div>
+        <div class="options rel-p-chips rel-p-kids" id="relKidsOptions" role="radiogroup" aria-label="Есть ли дети?">
+          <button class="option rel-p-chip rel-p-kids-0" type="button" role="radio" aria-checked="false" data-value="Нет">Нет</button>
+          <button class="option rel-p-chip rel-p-kids-1" type="button" role="radio" aria-checked="false" data-value="Да">Да</button>
+          <button class="option rel-p-chip rel-p-kids-2" type="button" role="radio" aria-checked="false" data-value="Другое">Другое</button>
         </div>
 
-        <label class="field">
-          <span class="field__label">Занятость / профессия</span>
-          <input class="field__input" name="occupation" type="text" placeholder="Например: маркетолог, в декрете, предприниматель">
-        </label>
-
-        <div class="field">
-          <span class="field__label">Примерный ежемесячный доход</span>
-          <div class="options options--compact" id="relIncomeOptions" role="radiogroup" aria-label="Примерный ежемесячный доход">
-            <button class="option" type="button" role="radio" aria-checked="false" data-value="До €1000">До €1000</button>
-            <button class="option" type="button" role="radio" aria-checked="false" data-value="€1000–2500">€1000–2500</button>
-            <button class="option" type="button" role="radio" aria-checked="false" data-value="€2500–5000">€2500–5000</button>
-            <button class="option" type="button" role="radio" aria-checked="false" data-value="€5000+">€5000+</button>
-          </div>
+        <div class="options rel-p-chips rel-p-income" id="relIncomeOptions" role="radiogroup" aria-label="Примерный доход в месяц">
+          <button class="option rel-p-chip rel-p-income-0" type="button" role="radio" aria-checked="false" data-value="Нет дохода">Нет дохода</button>
+          <button class="option rel-p-chip rel-p-income-1" type="button" role="radio" aria-checked="false" data-value="До 500€">До 500€</button>
+          <button class="option rel-p-chip rel-p-income-2" type="button" role="radio" aria-checked="false" data-value="500€ – 2 000€">500€ – 2 000€</button>
+          <button class="option rel-p-chip rel-p-income-3" type="button" role="radio" aria-checked="false" data-value="2 000€ – 5 000€">2 000€ – 5 000€</button>
+          <button class="option rel-p-chip rel-p-income-4" type="button" role="radio" aria-checked="false" data-value="Более 5 000€">Более 5 000€</button>
         </div>
       </form>
+
+      <button class="rel-hit rel-hit--s3-next" type="button" id="relProfileNext" disabled aria-label="Далее"></button>
+    </div>
+  </section>
+
+  <!-- ============ RELATIONSHIPS: SCREEN 4 — approved reference image ============ -->
+  <section class="screen screen--relshot theme-rel" data-screen="rel-outcome" aria-label="Отношения — чего ты хочешь">
+    <div class="rel-shot">
+      <img src="assets/reference/relationships/04-relationships-desired-outcome.png" alt="Чего ты хочешь в отношениях?" width="1024" height="1536">
+
+      <button class="rel-hit rel-hit--s4-back" type="button" data-back="rel-profile" aria-label="Назад"></button>
+
+      <button class="rel-hit rel-card rel-card--0" type="button" aria-pressed="false" data-value="Любовь и близость" aria-label="Любовь и близость"></button>
+      <button class="rel-hit rel-card rel-card--1" type="button" aria-pressed="false" data-value="Доверие и честность" aria-label="Доверие и честность"></button>
+      <button class="rel-hit rel-card rel-card--2" type="button" aria-pressed="false" data-value="Создать семью и детей" aria-label="Создать семью и детей"></button>
+      <button class="rel-hit rel-card rel-card--3" type="button" aria-pressed="false" data-value="Страсть и романтика" aria-label="Страсть и романтика"></button>
+      <button class="rel-hit rel-card rel-card--4" type="button" aria-pressed="false" data-value="Поддержка и партнёрство" aria-label="Поддержка и партнёрство"></button>
+      <button class="rel-hit rel-card rel-card--5" type="button" aria-pressed="false" data-value="Гармония и спокойствие" aria-label="Гармония и спокойствие"></button>
+      <button class="rel-hit rel-card rel-card--6" type="button" aria-pressed="false" data-value="Уважение и принятие" aria-label="Уважение и принятие"></button>
+      <button class="rel-hit rel-card rel-card--7" type="button" aria-pressed="false" data-value="Совместное развитие" aria-label="Совместное развитие"></button>
+      <button class="rel-hit rel-card rel-card--8" type="button" aria-pressed="false" data-value="Другое" data-other="true" aria-label="Другое — напиши свой вариант"></button>
+
+      <span class="rel-check rel-check--0" aria-hidden="true"></span>
+      <span class="rel-check rel-check--1" aria-hidden="true"></span>
+      <span class="rel-check rel-check--2" aria-hidden="true"></span>
+      <span class="rel-check rel-check--3" aria-hidden="true"></span>
+      <span class="rel-check rel-check--4" aria-hidden="true"></span>
+      <span class="rel-check rel-check--5" aria-hidden="true"></span>
+      <span class="rel-check rel-check--6" aria-hidden="true"></span>
+      <span class="rel-check rel-check--7" aria-hidden="true"></span>
+      <span class="rel-check rel-check--8" aria-hidden="true"></span>
+
+      <button class="btn btn--primary rel-hit--s4-next" type="button" id="relOutcomeNext" aria-label="Далее">
+        <span id="relOutcomeNextLabel">Далее (0)</span>
+        <svg viewBox="0 0 24 24" width="18" height="18"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="rel-hit rel-hit--s4-skip" type="button" aria-label="Пропустить вопрос"></button>
     </div>
 
-    <div class="screen__footer">
-      <button class="btn btn--primary btn--lg" type="button" id="relProfileNext" disabled>Далее</button>
+    <div class="rel-other-wrap" id="relOtherWrap" hidden>
+      <label class="field__label" for="relOtherInput">Свой вариант</label>
+      <textarea id="relOtherInput" maxlength="200" placeholder="Напиши свой вариант…"></textarea>
     </div>
   </section>
 

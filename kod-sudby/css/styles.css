@@ -517,6 +517,182 @@ button, .door, .option, .tabbar__item{
   pointer-events: none;
 }
 
+/* ============ Relationships: screen 3 — profile form over reference image ============ */
+.rel-hit--s3-back{
+  left: 1.46%; top: .65%;
+  width: 9.77%; height: 5.86%;
+  border-radius: 14px;
+}
+.rel-hit--s3-next{
+  left: 5.86%; top: 85.29%;
+  width: 88.28%; height: 6.51%;
+  border-radius: 999px;
+}
+.rel-hit--s3-next:disabled{ cursor: default; }
+
+.rel-p-field{
+  position: absolute;
+  box-sizing: border-box;
+  background: rgb(19,17,23);
+  border: 1px solid rgba(165,155,185,.3);
+  border-radius: 10px;
+  color: #f2eef7;
+  font-family: var(--font-body);
+  font-size: 14px;
+  padding: 0 3.5%;
+}
+.rel-p-field::placeholder{ color: rgba(190,185,205,.5); }
+.rel-p-field:focus{ outline: 2px solid var(--rel); outline-offset: 1px; }
+
+.rel-p-firstname{ left: 14.45%; top: 35.81%; width: 54.98%; height: 2.73%; }
+.rel-p-lastname{ left: 14.45%; top: 42.06%; width: 54.98%; height: 2.80%; }
+.rel-p-patronymic{ left: 14.45%; top: 48.31%; width: 54.98%; height: 2.80%; }
+.rel-p-birthdate{ left: 14.55%; top: 54.56%; width: 54.88%; height: 2.80%; }
+
+.rel-p-occupation{
+  left: 14.55%; top: 73.89%;
+  width: 79.39%; height: 3.06%;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M6 9l6 6 6-6' fill='none' stroke='%23e6ba6e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 3.5% center;
+  background-size: 16px;
+}
+.rel-p-occupation option{ background: #171420; color: #f2eef7; }
+
+.options.rel-p-chips{ display: contents; }
+.option.rel-p-chip{
+  position: absolute;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
+  background: rgb(14,14,19);
+  border: 1px solid rgba(165,155,185,.28);
+  border-radius: 10px;
+  color: #ece8f2;
+  font-family: var(--font-body);
+  font-size: 7.6px;
+  font-weight: 700;
+  line-height: 1.15;
+  padding: 0 1%;
+}
+.option.rel-p-chip[aria-checked="true"]{
+  background: rgb(23,13,19);
+  border-color: var(--rel);
+  box-shadow: 0 0 0 1px var(--rel) inset, 0 0 14px rgba(255,111,146,.35);
+  color: #ffd7e2;
+}
+
+.rel-p-marital-0{ left: 14.36%; top: 61.07%; width: 18.36%; height: 2.99%; }
+.rel-p-marital-1{ left: 34.08%; top: 61.07%; width: 13.87%; height: 2.99%; }
+.rel-p-marital-2{ left: 49.32%; top: 61.07%; width: 16.02%; height: 2.99%; }
+.rel-p-marital-3{ left: 66.70%; top: 61.07%; width: 13.96%; height: 2.99%; }
+.rel-p-marital-4{ left: 82.03%; top: 61.07%; width: 12.70%; height: 2.99%; }
+
+.rel-p-kids-0{ left: 14.36%; top: 67.58%; width: 13.48%; height: 2.99%; }
+.rel-p-kids-1{ left: 29.20%; top: 67.58%; width: 13.38%; height: 2.99%; }
+.rel-p-kids-2{ left: 43.85%; top: 67.58%; width: 15.04%; height: 2.99%; }
+
+.rel-p-income-0{ left: 14.36%; top: 80.86%; width: 13.09%; height: 2.93%; }
+.rel-p-income-1{ left: 28.71%; top: 80.86%; width: 12.21%; height: 2.93%; }
+.rel-p-income-2{ left: 42.29%; top: 80.86%; width: 15.92%; height: 2.93%; }
+.rel-p-income-3{ left: 59.57%; top: 80.86%; width: 17.38%; height: 2.93%; }
+.rel-p-income-4{ left: 78.22%; top: 80.86%; width: 15.92%; height: 2.93%; }
+
+/* ============ Relationships: screen 4 — outcome cards over reference image ============ */
+.rel-hit--s4-back{
+  left: 1.46%; top: .65%;
+  width: 9.77%; height: 5.86%;
+  border-radius: 14px;
+}
+.rel-card{ border-radius: 16px; }
+.rel-card--0{ left: 6.05%; top: 31.12%; width: 27.93%; height: 12.63%; }
+.rel-card--1{ left: 36.43%; top: 31.12%; width: 27.83%; height: 12.63%; }
+.rel-card--2{ left: 66.60%; top: 31.12%; width: 27.64%; height: 12.63%; }
+.rel-card--3{ left: 6.05%; top: 45.38%; width: 27.93%; height: 12.70%; }
+.rel-card--4{ left: 36.43%; top: 45.38%; width: 27.83%; height: 12.70%; }
+.rel-card--5{ left: 66.60%; top: 45.38%; width: 27.64%; height: 12.70%; }
+.rel-card--6{ left: 6.05%; top: 61.85%; width: 27.93%; height: 12.70%; }
+.rel-card--7{ left: 36.43%; top: 61.85%; width: 27.83%; height: 12.70%; }
+.rel-card--8{ left: 66.60%; top: 61.85%; width: 27.64%; height: 12.70%; }
+.rel-card[aria-pressed="true"]{
+  box-shadow: 0 0 0 3px var(--rel) inset, 0 0 22px rgba(255,111,146,.55);
+  border-radius: 16px;
+}
+
+.rel-check{
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.rel-check--0{ left: 29.98%; top: 32.03%; width: 2.93%; height: 1.95%; }
+.rel-check--1{ left: 60.06%; top: 32.03%; width: 2.93%; height: 1.95%; }
+.rel-check--2{ left: 90.33%; top: 32.03%; width: 2.93%; height: 1.95%; }
+.rel-check--3{ left: 29.98%; top: 46.22%; width: 2.93%; height: 1.95%; }
+.rel-check--4{ left: 60.06%; top: 46.22%; width: 2.93%; height: 1.95%; }
+.rel-check--5{ left: 90.33%; top: 46.22%; width: 2.93%; height: 1.95%; }
+.rel-check--6{ left: 29.98%; top: 63.28%; width: 2.93%; height: 1.95%; }
+.rel-check--7{ left: 60.06%; top: 63.28%; width: 2.93%; height: 1.95%; }
+.rel-check--8{ left: 90.33%; top: 63.28%; width: 2.93%; height: 1.95%; }
+.rel-check.is-checked{
+  background: var(--rel);
+  box-shadow: 0 0 10px rgba(255,111,146,.7);
+}
+.rel-check.is-checked::after{
+  content: "";
+  width: 45%;
+  height: 26%;
+  border-left: 2px solid #1a0810;
+  border-bottom: 2px solid #1a0810;
+  transform: rotate(-45deg) translate(6%, -20%);
+}
+
+.rel-hit--s4-next{
+  position: absolute;
+  left: 6.05%; top: 77.80%;
+  width: 88.18%; height: 6.51%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 15px;
+}
+.rel-hit--s4-skip{
+  left: 37.60%; top: 86.59%;
+  width: 24.90%; height: 2.93%;
+}
+
+.rel-other-wrap{
+  padding: 16px 20px calc(var(--tabbar-h) + var(--safe-b) + 16px);
+}
+.rel-other-wrap .field__label{
+  display: block;
+  margin-bottom: 8px;
+}
+.rel-other-wrap textarea{
+  width: 100%;
+  min-height: 90px;
+  box-sizing: border-box;
+  background: rgb(19,17,23);
+  border: 1px solid rgba(165,155,185,.3);
+  border-radius: 12px;
+  color: #f2eef7;
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.5;
+  padding: 12px 14px;
+  resize: vertical;
+}
+.rel-other-wrap textarea::placeholder{ color: rgba(190,185,205,.5); }
+.rel-other-wrap textarea:focus{ outline: 2px solid var(--rel); outline-offset: 1px; }
+
 /* ============ Relationships: case file cover ============ */
 .screen--case{
   background: var(--bg);

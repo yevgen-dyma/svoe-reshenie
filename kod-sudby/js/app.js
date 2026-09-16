@@ -32,7 +32,9 @@
           kids: "",
           occupation: "",
           income: ""
-        }
+        },
+        outcomes: [],
+        outcomesOther: ""
       }
     };
   }
@@ -47,7 +49,8 @@
         answers: Object.assign({}, parsed.answers),
         history: Array.isArray(parsed.history) ? parsed.history : [],
         relInvestigation: Object.assign({}, base.relInvestigation, parsed.relInvestigation, {
-          profile: Object.assign({}, base.relInvestigation.profile, parsed.relInvestigation && parsed.relInvestigation.profile)
+          profile: Object.assign({}, base.relInvestigation.profile, parsed.relInvestigation && parsed.relInvestigation.profile),
+          outcomes: Array.isArray(parsed.relInvestigation && parsed.relInvestigation.outcomes) ? parsed.relInvestigation.outcomes : []
         })
       });
     } catch (e) {
@@ -191,21 +194,22 @@
 
   function renderRelProfileForm() {
     const p = relProfileData();
-    ["lastName", "firstName", "patronymic", "occupation"].forEach((key) => {
+    ["lastName", "firstName", "patronymic", "occupation", "birthDate"].forEach((key) => {
       if (relProfileForm.elements[key]) relProfileForm.elements[key].value = p[key] || "";
     });
-    if (relProfileForm.elements.birthDate) relProfileForm.elements.birthDate.value = p.birthDate || "";
   }
 
   function checkRelProfileValid() {
     const p = relProfileData();
-    relProfileNextBtn.disabled = !(p.lastName.trim() && p.firstName.trim());
+    const ok = p.firstName.trim() && p.lastName.trim() && p.birthDate &&
+      p.marital && p.kids && p.occupation && p.income;
+    relProfileNextBtn.disabled = !ok;
   }
 
   if (relProfileForm) {
     renderRelProfileForm();
 
-    ["lastName", "firstName", "patronymic", "occupation"].forEach((key) => {
+    ["lastName", "firstName", "patronymic"].forEach((key) => {
       const el = relProfileForm.elements[key];
       if (!el) return;
       el.addEventListener("input", () => {
@@ -215,28 +219,30 @@
       });
     });
 
-    const birthDateEl = relProfileForm.elements.birthDate;
-    if (birthDateEl) {
-      birthDateEl.addEventListener("change", () => {
-        relProfileData().birthDate = birthDateEl.value;
+    ["birthDate", "occupation"].forEach((key) => {
+      const el = relProfileForm.elements[key];
+      if (!el) return;
+      el.addEventListener("change", () => {
+        relProfileData()[key] = el.value;
         saveState();
+        checkRelProfileValid();
       });
-    }
+    });
 
     bindSingleSelect(
       $("#relMaritalOptions"),
       () => relProfileData().marital,
-      (v) => { relProfileData().marital = v; saveState(); }
+      (v) => { relProfileData().marital = v; saveState(); checkRelProfileValid(); }
     );
     bindSingleSelect(
       $("#relKidsOptions"),
       () => relProfileData().kids,
-      (v) => { relProfileData().kids = v; saveState(); }
+      (v) => { relProfileData().kids = v; saveState(); checkRelProfileValid(); }
     );
     bindSingleSelect(
       $("#relIncomeOptions"),
       () => relProfileData().income,
-      (v) => { relProfileData().income = v; saveState(); }
+      (v) => { relProfileData().income = v; saveState(); checkRelProfileValid(); }
     );
 
     checkRelProfileValid();
@@ -246,10 +252,79 @@
     relProfileNextBtn.addEventListener("click", () => {
       if (relProfileNextBtn.disabled) return;
       saveState();
-      // Дальнейшие экраны расследования «Отношения» пока не утверждены — временно возвращаем на карту направлений.
+      goTo("rel-outcome");
+    });
+  }
+
+  // — screen 4: up to 5 outcome cards, "Другое" reveals a real text field —
+  const OUTCOME_MAX = 5;
+  const relCards = $$(".rel-card");
+  const relOutcomeNextLabel = $("#relOutcomeNextLabel");
+  const relOtherWrap = $("#relOtherWrap");
+  const relOtherInput = $("#relOtherInput");
+
+  function relOutcomes() {
+    return state.relInvestigation.outcomes;
+  }
+
+  function renderRelOutcomes() {
+    const selected = relOutcomes();
+    relCards.forEach((card, i) => {
+      const on = selected.includes(card.dataset.value);
+      card.setAttribute("aria-pressed", on ? "true" : "false");
+      const check = $(".rel-check--" + i);
+      if (check) check.classList.toggle("is-checked", on);
+    });
+    if (relOutcomeNextLabel) relOutcomeNextLabel.textContent = "Далее (" + selected.length + ")";
+
+    const otherCard = relCards.find((c) => c.dataset.other === "true");
+    const otherOn = otherCard && otherCard.getAttribute("aria-pressed") === "true";
+    if (relOtherWrap) relOtherWrap.hidden = !otherOn;
+  }
+
+  if (relOtherInput) {
+    relOtherInput.value = state.relInvestigation.outcomesOther || "";
+    relOtherInput.addEventListener("input", () => {
+      state.relInvestigation.outcomesOther = relOtherInput.value;
+      saveState();
+    });
+  }
+
+  relCards.forEach((card) => {
+    card.addEventListener("click", () => {
+      const selected = relOutcomes();
+      const value = card.dataset.value;
+      const idx = selected.indexOf(value);
+      if (idx >= 0) {
+        selected.splice(idx, 1);
+      } else {
+        if (selected.length >= OUTCOME_MAX) {
+          vibrate(15);
+          return;
+        }
+        selected.push(value);
+      }
+      saveState();
+      renderRelOutcomes();
+      vibrate(6);
+    });
+  });
+
+  renderRelOutcomes();
+
+  const relOutcomeNextBtn = $("#relOutcomeNext");
+  if (relOutcomeNextBtn) {
+    relOutcomeNextBtn.addEventListener("click", () => {
+      saveState();
       goTo("directions");
     });
   }
+  $$(".rel-hit--s4-skip").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      saveState();
+      goTo("directions");
+    });
+  });
 
   /* ---------------- health screen ---------------- */
 
@@ -523,9 +598,11 @@
       if (relSituationInput) { relSituationInput.value = ""; updateRelSituationCounter(); }
       if (relProfileForm) {
         renderRelProfileForm();
-        $$(".options--compact .option").forEach((btn) => btn.setAttribute("aria-checked", "false"));
+        $$(".rel-p-chip").forEach((btn) => btn.setAttribute("aria-checked", "false"));
         checkRelProfileValid();
       }
+      if (relOtherInput) relOtherInput.value = "";
+      renderRelOutcomes();
       moneySlider.value = 15000;
       updateMoneyDisplay();
       renderProfile();
