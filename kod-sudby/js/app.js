@@ -33,8 +33,8 @@
           occupation: "",
           income: ""
         },
-        outcomes: [],
-        outcomesOther: ""
+        situationCategory: "",
+        situationCategoryOther: ""
       }
     };
   }
@@ -49,8 +49,7 @@
         answers: Object.assign({}, parsed.answers),
         history: Array.isArray(parsed.history) ? parsed.history : [],
         relInvestigation: Object.assign({}, base.relInvestigation, parsed.relInvestigation, {
-          profile: Object.assign({}, base.relInvestigation.profile, parsed.relInvestigation && parsed.relInvestigation.profile),
-          outcomes: Array.isArray(parsed.relInvestigation && parsed.relInvestigation.outcomes) ? parsed.relInvestigation.outcomes : []
+          profile: Object.assign({}, base.relInvestigation.profile, parsed.relInvestigation && parsed.relInvestigation.profile)
         })
       });
     } catch (e) {
@@ -256,75 +255,51 @@
     });
   }
 
-  // — screen 4: up to 5 outcome cards, "Другое" reveals a real text field —
-  const OUTCOME_MAX = 5;
-  const relCards = $$(".rel-card");
-  const relOutcomeNextLabel = $("#relOutcomeNextLabel");
+  // — screen 4: single-select current-situation row, "Другое" reveals a real text field —
+  const relRows = $$(".rel-row");
   const relOtherWrap = $("#relOtherWrap");
   const relOtherInput = $("#relOtherInput");
 
-  function relOutcomes() {
-    return state.relInvestigation.outcomes;
-  }
-
-  function renderRelOutcomes() {
-    const selected = relOutcomes();
-    relCards.forEach((card, i) => {
-      const on = selected.includes(card.dataset.value);
-      card.setAttribute("aria-pressed", on ? "true" : "false");
-      const check = $(".rel-check--" + i);
-      if (check) check.classList.toggle("is-checked", on);
+  function renderRelSituation() {
+    const selected = state.relInvestigation.situationCategory;
+    relRows.forEach((row, i) => {
+      const on = row.dataset.value === selected && selected !== "";
+      row.setAttribute("aria-checked", on ? "true" : "false");
+      const radio = $(".rel-radio--" + i);
+      if (radio) radio.classList.toggle("is-checked", on);
     });
-    if (relOutcomeNextLabel) relOutcomeNextLabel.textContent = "Далее (" + selected.length + ")";
 
-    const otherCard = relCards.find((c) => c.dataset.other === "true");
-    const otherOn = otherCard && otherCard.getAttribute("aria-pressed") === "true";
+    const otherRow = relRows.find((r) => r.dataset.other === "true");
+    const otherOn = otherRow && otherRow.getAttribute("aria-checked") === "true";
     if (relOtherWrap) relOtherWrap.hidden = !otherOn;
   }
 
   if (relOtherInput) {
-    relOtherInput.value = state.relInvestigation.outcomesOther || "";
+    relOtherInput.value = state.relInvestigation.situationCategoryOther || "";
     relOtherInput.addEventListener("input", () => {
-      state.relInvestigation.outcomesOther = relOtherInput.value;
+      state.relInvestigation.situationCategoryOther = relOtherInput.value;
       saveState();
     });
   }
 
-  relCards.forEach((card) => {
-    card.addEventListener("click", () => {
-      const selected = relOutcomes();
-      const value = card.dataset.value;
-      const idx = selected.indexOf(value);
-      if (idx >= 0) {
-        selected.splice(idx, 1);
-      } else {
-        if (selected.length >= OUTCOME_MAX) {
-          vibrate(15);
-          return;
-        }
-        selected.push(value);
-      }
+  relRows.forEach((row) => {
+    row.addEventListener("click", () => {
+      state.relInvestigation.situationCategory = row.dataset.value;
       saveState();
-      renderRelOutcomes();
+      renderRelSituation();
       vibrate(6);
     });
   });
 
-  renderRelOutcomes();
+  renderRelSituation();
 
-  const relOutcomeNextBtn = $("#relOutcomeNext");
-  if (relOutcomeNextBtn) {
-    relOutcomeNextBtn.addEventListener("click", () => {
+  const relSituationNextBtn = $("#relSituationNext");
+  if (relSituationNextBtn) {
+    relSituationNextBtn.addEventListener("click", () => {
       saveState();
       goTo("directions");
     });
   }
-  $$(".rel-hit--s4-skip").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      saveState();
-      goTo("directions");
-    });
-  });
 
   /* ---------------- health screen ---------------- */
 
@@ -602,7 +577,7 @@
         checkRelProfileValid();
       }
       if (relOtherInput) relOtherInput.value = "";
-      renderRelOutcomes();
+      renderRelSituation();
       moneySlider.value = 15000;
       updateMoneyDisplay();
       renderProfile();

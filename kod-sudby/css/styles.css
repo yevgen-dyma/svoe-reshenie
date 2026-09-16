@@ -603,70 +603,58 @@ button, .door, .option, .tabbar__item{
 .rel-p-income-3{ left: 59.57%; top: 80.86%; width: 17.38%; height: 2.93%; }
 .rel-p-income-4{ left: 78.22%; top: 80.86%; width: 15.92%; height: 2.93%; }
 
-/* ============ Relationships: screen 4 — outcome cards over reference image ============ */
+/* ============ Relationships: screen 4 — current situation rows over reference image ============ */
 .rel-hit--s4-back{
   left: 1.46%; top: .65%;
   width: 9.77%; height: 5.86%;
   border-radius: 14px;
 }
-.rel-card{ border-radius: 16px; }
-.rel-card--0{ left: 6.05%; top: 31.12%; width: 27.93%; height: 12.63%; }
-.rel-card--1{ left: 36.43%; top: 31.12%; width: 27.83%; height: 12.63%; }
-.rel-card--2{ left: 66.60%; top: 31.12%; width: 27.64%; height: 12.63%; }
-.rel-card--3{ left: 6.05%; top: 45.38%; width: 27.93%; height: 12.70%; }
-.rel-card--4{ left: 36.43%; top: 45.38%; width: 27.83%; height: 12.70%; }
-.rel-card--5{ left: 66.60%; top: 45.38%; width: 27.64%; height: 12.70%; }
-.rel-card--6{ left: 6.05%; top: 61.85%; width: 27.93%; height: 12.70%; }
-.rel-card--7{ left: 36.43%; top: 61.85%; width: 27.83%; height: 12.70%; }
-.rel-card--8{ left: 66.60%; top: 61.85%; width: 27.64%; height: 12.70%; }
-.rel-card[aria-pressed="true"]{
-  box-shadow: 0 0 0 3px var(--rel) inset, 0 0 22px rgba(255,111,146,.55);
-  border-radius: 16px;
+.rel-row{ border-radius: 14px; }
+.rel-row--0{ left: 6.05%; top: 23.37%; width: 87.70%; height: 5.08%; }
+.rel-row--1{ left: 6.05%; top: 28.97%; width: 87.70%; height: 5.08%; }
+.rel-row--2{ left: 6.05%; top: 34.64%; width: 87.70%; height: 5.08%; }
+.rel-row--3{ left: 6.05%; top: 40.23%; width: 87.70%; height: 5.08%; }
+.rel-row--4{ left: 6.05%; top: 45.90%; width: 87.70%; height: 5.08%; }
+.rel-row--5{ left: 6.05%; top: 51.56%; width: 87.70%; height: 5.08%; }
+.rel-row--6{ left: 6.05%; top: 57.16%; width: 87.70%; height: 5.14%; }
+.rel-row--7{ left: 6.05%; top: 62.89%; width: 87.70%; height: 5.14%; }
+.rel-row--8{ left: 6.05%; top: 68.62%; width: 87.70%; height: 5.14%; }
+.rel-row--9{ left: 6.05%; top: 74.35%; width: 87.70%; height: 5.34%; }
+.rel-row[aria-checked="true"]{
+  box-shadow: 0 0 0 2px var(--rel) inset, 0 0 16px rgba(255,111,146,.45);
+  border-radius: 14px;
 }
 
-.rel-check{
+.rel-radio{
   position: absolute;
   border-radius: 50%;
   pointer-events: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  box-sizing: border-box;
 }
-.rel-check--0{ left: 29.98%; top: 32.03%; width: 2.93%; height: 1.95%; }
-.rel-check--1{ left: 60.06%; top: 32.03%; width: 2.93%; height: 1.95%; }
-.rel-check--2{ left: 90.33%; top: 32.03%; width: 2.93%; height: 1.95%; }
-.rel-check--3{ left: 29.98%; top: 46.22%; width: 2.93%; height: 1.95%; }
-.rel-check--4{ left: 60.06%; top: 46.22%; width: 2.93%; height: 1.95%; }
-.rel-check--5{ left: 90.33%; top: 46.22%; width: 2.93%; height: 1.95%; }
-.rel-check--6{ left: 29.98%; top: 63.28%; width: 2.93%; height: 1.95%; }
-.rel-check--7{ left: 60.06%; top: 63.28%; width: 2.93%; height: 1.95%; }
-.rel-check--8{ left: 90.33%; top: 63.28%; width: 2.93%; height: 1.95%; }
-.rel-check.is-checked{
-  background: var(--rel);
+.rel-radio--0{ left: 8.89%; top: 24.87%; width: 2.93%; height: 1.95%; }
+.rel-radio--1{ left: 8.89%; top: 30.47%; width: 2.93%; height: 1.95%; }
+.rel-radio--2{ left: 8.89%; top: 36.13%; width: 2.93%; height: 1.95%; }
+.rel-radio--3{ left: 8.89%; top: 41.73%; width: 2.93%; height: 1.95%; }
+.rel-radio--4{ left: 8.89%; top: 47.40%; width: 2.93%; height: 1.95%; }
+.rel-radio--5{ left: 8.89%; top: 53.06%; width: 2.93%; height: 1.95%; }
+.rel-radio--6{ left: 8.89%; top: 58.66%; width: 2.93%; height: 1.95%; }
+.rel-radio--7{ left: 8.89%; top: 64.39%; width: 2.93%; height: 1.95%; }
+.rel-radio--8{ left: 8.89%; top: 70.12%; width: 2.93%; height: 1.95%; }
+.rel-radio--9{ left: 8.89%; top: 75.85%; width: 2.93%; height: 1.95%; }
+.rel-radio.is-checked{
   box-shadow: 0 0 10px rgba(255,111,146,.7);
 }
-.rel-check.is-checked::after{
+.rel-radio.is-checked::after{
   content: "";
-  width: 45%;
-  height: 26%;
-  border-left: 2px solid #1a0810;
-  border-bottom: 2px solid #1a0810;
-  transform: rotate(-45deg) translate(6%, -20%);
+  position: absolute;
+  inset: 24%;
+  border-radius: 50%;
+  background: var(--rel);
 }
 
 .rel-hit--s4-next{
-  position: absolute;
-  left: 6.05%; top: 77.80%;
-  width: 88.18%; height: 6.51%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  font-size: 15px;
-}
-.rel-hit--s4-skip{
-  left: 37.60%; top: 86.59%;
-  width: 24.90%; height: 2.93%;
+  left: 5.86%; top: 81.38%;
+  width: 88.18%; height: 5.86%;
 }
 
 .rel-other-wrap{
