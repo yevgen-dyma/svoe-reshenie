@@ -208,6 +208,44 @@
     };
   }
 
+  const REL_ICON_PATHS = {
+    heart: '<path d="M12 21s-7.5-4.35-10-9.5C.5 7.5 3 4 6.5 4c2 0 3.5 1 5.5 3 2-2 3.5-3 5.5-3C21 4 23.5 7.5 22 11.5 19.5 16.65 12 21 12 21z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>',
+    flame: '<path d="M12 2c1 4-3 5-3 9a3 3 0 0 0 6 0c0-2-1-2-1-4 2 1 4 4 4 7a6 6 0 0 1-12 0c0-5 3-7 6-12z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>',
+    shield: '<path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>',
+    warning: '<path d="M12 3l10 18H2L12 3z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 10v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="16.6" r="1" fill="currentColor" stroke="none"/>',
+    link: '<path d="M9 7H7a4 4 0 0 0 0 8h2M15 7h2a4 4 0 0 1 0 8h-2M8 12h8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+    people: '<circle cx="12" cy="8" r="3.4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M4.5 20c0-3.9 3.4-6.6 7.5-6.6s7.5 2.7 7.5 6.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+    home: '<path d="M4 11l8-7 8 7v9a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1v-9z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>',
+    clock: '<circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.5v5l3.2 2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+    mask: '<path d="M3 3l18 18M10.6 10.6a2 2 0 0 0 2.8 2.8M6.6 6.7C4.5 8 3 10 3 12c0 0 3.5 6 9 6 1.6 0 3-.5 4.2-1.2M9.9 4.2C10.6 4.1 11.3 4 12 4c5.5 0 9 6 9 6a13 13 0 0 1-2 3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+    cycle: '<path d="M4.5 12a7.5 7.5 0 0 1 13-5.1M19.5 12a7.5 7.5 0 0 1-13 5.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M17.2 3.8v4h-4M6.8 20.2v-4h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+    compass: '<circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M14.6 9.4L13 13l-3.6 1.6L11 11l3.6-1.6z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>'
+  };
+
+  const REL_ICON_RULES = [
+    [/страст|влечен/i, "flame"],
+    [/люб|чувств/i, "heart"],
+    [/спокойств|безопасн|довер|поддержк|честн|горд/i, "shield"],
+    [/насил|унижен|контрол|ревност|критик|зависим/i, "warning"],
+    [/предат|измен|ложь|манипул|использ/i, "link"],
+    [/мама|папа|бабушк|дедушк|родствен|учител|наставник|подруг|друз|медиа|партн|родител/i, "people"],
+    [/дет[ие]|семь|брак/i, "home"],
+    [/детств|подростк|не знаю|начал|первой/i, "clock"],
+    [/сценар|повторя|конфликт/i, "cycle"],
+    [/дистанц|холодност|избега|замыка|отталкива|одиноч|друго/i, "mask"]
+  ];
+
+  function relIconFor(text) {
+    for (var i = 0; i < REL_ICON_RULES.length; i++) {
+      if (REL_ICON_RULES[i][0].test(text)) return REL_ICON_RULES[i][1];
+    }
+    return "compass";
+  }
+
+  function relIconSvg(name) {
+    return '<svg viewBox="0 0 24 24" aria-hidden="true">' + (REL_ICON_PATHS[name] || REL_ICON_PATHS.compass) + '</svg>';
+  }
+
   const REL_QUESTIONS = [
     {
       id: "rel-desired-feelings", type: "multi",
@@ -383,16 +421,20 @@
 
     if (cfg.type === "single" || cfg.type === "multi") {
       const list = document.createElement("div");
-      list.className = "options";
+      list.className = "options options--case";
       list.setAttribute("role", cfg.type === "single" ? "radiogroup" : "group");
       cfg.options.forEach((opt) => {
         const btn = document.createElement("button");
         btn.type = "button";
-        btn.className = "option";
+        btn.className = "option option--case";
         btn.dataset.value = opt;
         if (cfg.type === "single") { btn.setAttribute("role", "radio"); btn.setAttribute("aria-checked", "false"); }
         else { btn.setAttribute("aria-pressed", "false"); }
-        btn.textContent = opt;
+        btn.innerHTML =
+          '<span class="option--case__icon">' + relIconSvg(relIconFor(opt)) + '</span>' +
+          '<span class="option--case__text"></span>' +
+          '<span class="option--case__check"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>';
+        btn.querySelector(".option--case__text").textContent = opt;
         list.appendChild(btn);
       });
       body.appendChild(list);
@@ -434,7 +476,10 @@
       cfg.sliders.forEach((s) => {
         const row = document.createElement("div");
         row.innerHTML =
-          '<div class="rel-dyn-slider__label"><span>' + s.label + '</span><b></b></div>' +
+          '<div class="rel-dyn-slider__label"><span class="rel-dyn-slider__label__main">' +
+            '<span class="rel-dyn-slider__label__icon">' + relIconSvg(relIconFor(s.label)) + '</span>' +
+            '<span>' + s.label + '</span>' +
+          '</span><b></b></div>' +
           '<input class="slider" type="range" min="0" max="10" step="1">';
         wrap.appendChild(row);
         const input = row.querySelector("input");

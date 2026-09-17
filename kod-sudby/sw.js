@@ -1,4 +1,4 @@
-const CACHE_NAME = "kod-sudby-v11";
+const CACHE_NAME = "kod-sudby-v12";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -15,6 +15,8 @@ const APP_SHELL = [
   "./assets/scenes/health-scene.svg",
   "./assets/scenes/family-scene.svg",
   "./assets/reference/relationships/00-evgeniy-hypnodetective.png",
+  "./assets/reference/relationships/00b-directions.png",
+  "./assets/reference/relationships/00c-case-open.png",
   "./assets/reference/relationships/02-relationships-problem.png",
   "./assets/reference/relationships/03-relationships-profile.png",
   "./assets/reference/relationships/04-relationships-current-situation.png",
