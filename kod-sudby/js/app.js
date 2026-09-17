@@ -15,6 +15,15 @@
 
   /* ---------------- state ---------------- */
 
+  function genCaseId() {
+    return "R-" + Math.floor(10000 + Math.random() * 90000);
+  }
+
+  const REL_ARRAY_FIELDS = [
+    "resultBenefits", "desiredFeelings", "obstacles", "repeatingScenario",
+    "role", "boundaries", "familyModel", "influence", "externalInfluence", "beliefs"
+  ];
+
   function defaultState() {
     return {
       profile: { name: "" },
@@ -22,6 +31,9 @@
       answers: {},
       history: [],
       relInvestigation: {
+        caseId: genCaseId(),
+        startedAt: null,
+        branch: "",
         problemDescription: "",
         profile: {
           lastName: "",
@@ -35,12 +47,43 @@
         },
         situationCategory: "",
         situationCategoryOther: "",
+        currentRating: null,
+        currentRatingNote: "",
         goalDirection: "",
         goalDirectionOther: "",
         resultBenefits: [],
         resultBenefitsOther: "",
         whyNow: "",
-        whyNowOther: ""
+        whyNowOther: "",
+        branchExtra: "",
+        branchExtraOther: "",
+        desiredFeelings: [],
+        desiredFeelingsOther: "",
+        obstacles: [],
+        obstaclesOther: "",
+        mainFear: "",
+        mainFearOther: "",
+        fearReaction: "",
+        fearReactionOther: "",
+        repeatingScenario: [],
+        repeatingScenarioOther: "",
+        role: [],
+        roleOther: "",
+        boundaries: [],
+        boundariesOther: "",
+        importantFactors: { love: 5, financial: 5, intimacy: 5, values: 5, freedom: 5, family: 5 },
+        children: "",
+        childrenOther: "",
+        familyModel: [],
+        familyModelOther: "",
+        problemOnset: "",
+        problemOnsetOther: "",
+        influence: [],
+        influenceOther: "",
+        externalInfluence: [],
+        externalInfluenceOther: "",
+        beliefs: [],
+        beliefsOther: ""
       }
     };
   }
@@ -51,12 +94,18 @@
       if (!raw) return defaultState();
       const parsed = JSON.parse(raw);
       const base = defaultState();
+      const parsedRel = parsed.relInvestigation || {};
+      const relArrays = {};
+      REL_ARRAY_FIELDS.forEach((key) => {
+        relArrays[key] = Array.isArray(parsedRel[key]) ? parsedRel[key] : [];
+      });
       return Object.assign(base, parsed, {
         answers: Object.assign({}, parsed.answers),
         history: Array.isArray(parsed.history) ? parsed.history : [],
-        relInvestigation: Object.assign({}, base.relInvestigation, parsed.relInvestigation, {
-          profile: Object.assign({}, base.relInvestigation.profile, parsed.relInvestigation && parsed.relInvestigation.profile),
-          resultBenefits: Array.isArray(parsed.relInvestigation && parsed.relInvestigation.resultBenefits) ? parsed.relInvestigation.resultBenefits : []
+        relInvestigation: Object.assign({}, base.relInvestigation, parsedRel, relArrays, {
+          caseId: parsedRel.caseId || base.relInvestigation.caseId,
+          profile: Object.assign({}, base.relInvestigation.profile, parsedRel.profile),
+          importantFactors: Object.assign({}, base.relInvestigation.importantFactors, parsedRel.importantFactors)
         })
       });
     } catch (e) {
@@ -104,10 +153,355 @@
     state.history = state.history.slice(0, 30);
   }
 
+  /* ---------------- relationships: config-driven investigation engine ----------------
+     Screens here are NOT tied to any approved reference image or baked PNG step
+     number — order, branching and progress are computed purely from this config,
+     per screenId/type/options/next architecture. */
+
+  const REL_BRANCH_GROUPS = {
+    seek: ["Хочу встретить любовь и создать отношения", "Хочу выйти замуж / жениться", "Постоянно остаюсь один / одна"],
+    improve: ["Хочу улучшить текущие отношения", "Хочу сохранить отношения любой ценой"],
+    leave: ["Хочу развестись / уйти", "Хочу уйти, но не могу", "Уже развёлся(лась), но не могу отпустить"],
+    betrayal: ["Переживаю измену / предательство"],
+    toxic: ["Токсичные / зависимые отношения"]
+  };
+
+  const REL_BRANCH_EXTRA = {
+    seek: {
+      question: "Что сейчас самое сложное в поиске отношений?",
+      options: ["Одиночество, которое тяжело переносить", "Страх снова довериться", "Не знаю, каких людей выбирать", "Прошлый опыт мешает", "Мало времени и социальных возможностей", "Другое"]
+    },
+    improve: {
+      question: "Что вы уже пробовали, чтобы улучшить отношения?",
+      options: ["Разговоры и объяснения", "Совместный отдых", "Психолог или консультация", "Ультиматумы", "Ничего ещё не пробовали", "Другое"]
+    },
+    leave: {
+      question: "Что тебя удерживает?",
+      options: ["Дети", "Деньги", "Жильё", "Страх одиночества", "Чувство вины", "Страх реакции партнёра", "Надежда, что всё изменится", "Другое"]
+    },
+    betrayal: {
+      question: "Чего ты хочешь дальше после измены?",
+      options: ["Восстановить отношения", "Понять, почему это произошло", "Решить — остаться или уйти", "Отпустить ситуацию и двигаться дальше", "Пока не знаю", "Другое"]
+    },
+    toxic: {
+      question: "Что удерживает тебя в этих отношениях?",
+      options: ["Страх остаться одному(ой)", "Финансовая зависимость", "Надежда, что человек изменится", "Дети", "Привычка и страх перемен", "Не знаю, как уйти", "Другое"]
+    }
+  };
+
+  function relComputeBranch() {
+    const goal = state.relInvestigation.goalDirection;
+    for (const key in REL_BRANCH_GROUPS) {
+      if (REL_BRANCH_GROUPS[key].indexOf(goal) >= 0) return key;
+    }
+    return "";
+  }
+
+  function relBranchExtraConfig() {
+    const branch = state.relInvestigation.branch;
+    const def = REL_BRANCH_EXTRA[branch];
+    if (!def) return null;
+    return {
+      id: "rel-branch-extra", type: "single", question: def.question,
+      hint: "Выбери то, что ближе всего", options: def.options, other: true,
+      stateKey: "branchExtra", otherKey: "branchExtraOther", back: "rel-why-now"
+    };
+  }
+
+  const REL_QUESTIONS = [
+    {
+      id: "rel-desired-feelings", type: "multi",
+      question: "Какие чувства тебе хочется испытывать рядом с партнёром?",
+      hint: "Выбери всё, что откликается",
+      options: ["Любовь", "Спокойствие и безопасность", "Радость и лёгкость", "Страсть и влечение", "Поддержка и понимание", "Гордость друг за друга", "Доверие и честность", "Вдохновение", "Другое"],
+      other: true, stateKey: "desiredFeelings", otherKey: "desiredFeelingsOther"
+    },
+    {
+      id: "rel-obstacles", type: "multi",
+      question: "Что сейчас мешает тебе построить желаемые отношения?",
+      hint: "Выбери основные причины",
+      options: ["Страх быть отвергнутым(ой)", "Низкая самооценка", "Негативный прошлый опыт", "Недоверие к людям", "Финансовые трудности", "Зависимые сценарии", "Непрожитые обиды", "Другие приоритеты", "Другое"],
+      other: true, stateKey: "obstacles", otherKey: "obstaclesOther"
+    },
+    {
+      id: "rel-main-fear", type: "single",
+      question: "Чего ты боишься больше всего, если ситуация действительно изменится?",
+      hint: "Выбери, что откликается сильнее всего",
+      options: ["Остаться в одиночестве", "Снова быть преданным(ой)", "Не справиться с переменами", "Разочаровать близких", "Потерять стабильность", "Что станет ещё хуже", "Другое"],
+      other: true, stateKey: "mainFear", otherKey: "mainFearOther"
+    },
+    {
+      id: "rel-fear-reaction", type: "single",
+      question: "Как ты обычно реагируешь на этот страх?",
+      hint: "Выбери свой типичный сценарий",
+      options: ["Избегаю ситуации", "Замыкаюсь в себе", "Вступаю в конфликт", "Ищу поддержку у других", "Отвлекаюсь чем-то другим", "Пытаюсь справиться сама/сам", "Другое"],
+      other: true, stateKey: "fearReaction", otherKey: "fearReactionOther"
+    },
+    {
+      id: "rel-repeating-scenario", type: "multi",
+      question: "Есть ли повторяющийся сценарий?",
+      hint: "Выбери то, что повторяется",
+      options: ["Выбираю недоступных", "Одни и те же конфликты", "Отношения начинаются ярко, но быстро угасают", "Меня используют / манипулируют", "Я всё время спасаю партнёра", "Партнёры критикуют меня", "Измена или предательство", "Боюсь близости, отталкиваю", "Другое"],
+      other: true, stateKey: "repeatingScenario", otherKey: "repeatingScenarioOther"
+    },
+    {
+      id: "rel-role", type: "multi",
+      question: "Какая роль тебе ближе в отношениях?",
+      hint: "Выбери свои привычные роли",
+      options: ["Заботливый(ая)", "Спасатель(ница)", "Жертва", "Контролёр(ша)", "Дистанцируюсь", "Манипулятор(ша)", "Друг(подруга)", "Партнёр(ша)", "Другое"],
+      other: true, stateKey: "role", otherKey: "roleOther"
+    },
+    {
+      id: "rel-boundaries", type: "multi",
+      question: "Что для тебя неприемлемо в отношениях?",
+      hint: "Выбери границы",
+      options: ["Ложь и предательство", "Насилие (любое)", "Унижение и критика", "Контроль и ревность", "Зависимости", "Финансовая нечестность", "Отсутствие развития", "Другое"],
+      other: true, stateKey: "boundaries", otherKey: "boundariesOther"
+    },
+    {
+      id: "rel-important-factors", type: "sliders",
+      question: "Как для тебя важны следующие факторы?",
+      hint: "Оцени от 0 до 10",
+      sliders: [
+        { key: "love", label: "Любовь и чувства" },
+        { key: "financial", label: "Финансовая стабильность" },
+        { key: "intimacy", label: "Сексуальная близость" },
+        { key: "values", label: "Общие ценности" },
+        { key: "freedom", label: "Свобода и личное пространство" },
+        { key: "family", label: "Дети и семья" }
+      ],
+      stateKey: "importantFactors"
+    },
+    {
+      id: "rel-children", type: "single",
+      question: "Есть ли дети в отношениях?",
+      hint: "Выбери ситуацию",
+      options: ["Нет детей", "Есть совместные дети", "Дети от предыдущих отношений", "Есть, но хотим ещё", "Не хотим детей", "Другое"],
+      other: true, stateKey: "children", otherKey: "childrenOther"
+    },
+    {
+      id: "rel-family-model", type: "multi",
+      question: "Какие отношения были в твоей семье?",
+      hint: "Выбери то, что ты видел(а)",
+      options: ["Любовь и поддержка", "Конфликты и ссоры", "Холодность и дистанция", "Насилие (физ. или псих.)", "Измена, предательство", "Алкоголь / зависимости", "Родители развелись", "Один родитель", "Другое"],
+      other: true, stateKey: "familyModel", otherKey: "familyModelOther"
+    },
+    {
+      id: "rel-problem-onset", type: "single",
+      question: "Когда впервые появилась подобная проблема в отношениях?",
+      hint: "Выбери период",
+      options: ["В детстве / семье родителей", "В подростковом возрасте", "В первой серьёзной любви", "В браке / длительных отношениях", "Не знаю", "Другое"],
+      other: true, stateKey: "problemOnset", otherKey: "problemOnsetOther"
+    },
+    {
+      id: "rel-influence", type: "multi", max: 3,
+      question: "Кто влиял на твоё видение отношений больше всего?",
+      hint: "Отметь 1–3 человека",
+      options: ["Мама", "Папа", "Бабушка / дедушка", "Старшие родственники", "Учителя, наставники", "Подруги / друзья", "Медиа (фильмы, книги)", "Другое"],
+      other: true, stateKey: "influence", otherKey: "influenceOther"
+    },
+    {
+      id: "rel-external-influence", type: "multi",
+      question: "Что извне сильнее всего влияет на твою ситуацию сейчас?",
+      hint: "Выбери всё, что подходит",
+      options: ["Партнёр", "Семья, родственники", "Друзья", "Работа и финансы", "Прошлые отношения", "Общественные установки", "Другое"],
+      other: true, stateKey: "externalInfluence", otherKey: "externalInfluenceOther"
+    },
+    {
+      id: "rel-beliefs", type: "multi",
+      question: "Какие убеждения о любви ты усвоил(а) в детстве?",
+      hint: "Выбери то, во что веришь до сих пор",
+      options: ["Любовь нужно заслужить", "Любовь — это страдание", "Все мужчины / женщины одинаковые", "Меня не могут любить просто так", "Счастливые отношения — редкость", "Лучше быть одному(ой)", "Другое"],
+      other: true, stateKey: "beliefs", otherKey: "beliefsOther"
+    }
+  ];
+
+  function relRoute() {
+    const extra = relBranchExtraConfig();
+    return (extra ? [extra] : []).concat(REL_QUESTIONS);
+  }
+
+  function relRouteIndex(id) {
+    return relRoute().findIndex((s) => s.id === id);
+  }
+
+  function relOptionValue(cfg) {
+    const v = state.relInvestigation[cfg.stateKey];
+    return Array.isArray(v) ? v : (v || "");
+  }
+
+  function relBuildScreen(cfg, idx, total) {
+    const section = document.createElement("section");
+    section.className = "screen screen--quiz theme-rel";
+    section.dataset.screen = cfg.id;
+    section.setAttribute("aria-label", "Отношения — " + cfg.question);
+
+    const prevId = idx === 0 ? "rel-why-now" : relRoute()[idx - 1].id;
+    const pct = Math.round(((idx + 1) / total) * 100);
+
+    section.innerHTML =
+      '<header class="topbar">' +
+        '<button class="iconbtn" type="button" data-back="' + prevId + '" aria-label="Назад">' +
+          '<svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+        '</button>' +
+        '<h2 class="topbar__title">Отношения</h2>' +
+        '<span class="iconbtn iconbtn--ghost" aria-hidden="true"></span>' +
+      '</header>' +
+      '<p class="rel-step">Шаг ' + (idx + 1) + ' из ' + total + '</p>' +
+      '<div class="rel-progress"><div class="rel-progress__fill" style="width:' + pct + '%"></div></div>' +
+      '<div class="screen__body">' +
+        '<p class="question"></p>' +
+        (cfg.hint ? '<p class="question-hint"></p>' : '') +
+        '<div class="rel-dyn-body"></div>' +
+        (cfg.other ? '<div class="rel-dyn-other" hidden><label class="field__label"></label><textarea class="textarea" maxlength="300" placeholder="Напиши свой вариант…"></textarea></div>' : '') +
+      '</div>' +
+      '<div class="screen__footer"><button class="btn btn--primary btn--lg" type="button"></button></div>';
+
+    section.querySelector(".question").textContent = cfg.question;
+    if (cfg.hint) section.querySelector(".question-hint").textContent = cfg.hint;
+    if (cfg.other) section.querySelector(".rel-dyn-other label").textContent = "Свой вариант";
+
+    const body = section.querySelector(".rel-dyn-body");
+    const nextBtn = section.querySelector(".screen__footer button");
+
+    function updateNextLabel() {
+      if (cfg.type === "multi" && cfg.max) {
+        const count = relOptionValue(cfg).length;
+        nextBtn.textContent = "Далее (" + count + "/" + cfg.max + ")";
+      } else {
+        nextBtn.textContent = "Далее";
+      }
+    }
+
+    function syncOtherField() {
+      if (!cfg.other) return;
+      const wrap = section.querySelector(".rel-dyn-other");
+      const val = relOptionValue(cfg);
+      const otherOn = Array.isArray(val) ? val.indexOf("Другое") >= 0 : val === "Другое";
+      wrap.hidden = !otherOn;
+    }
+
+    if (cfg.type === "single" || cfg.type === "multi") {
+      const list = document.createElement("div");
+      list.className = "options";
+      list.setAttribute("role", cfg.type === "single" ? "radiogroup" : "group");
+      cfg.options.forEach((opt) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "option";
+        btn.dataset.value = opt;
+        if (cfg.type === "single") { btn.setAttribute("role", "radio"); btn.setAttribute("aria-checked", "false"); }
+        else { btn.setAttribute("aria-pressed", "false"); }
+        btn.textContent = opt;
+        list.appendChild(btn);
+      });
+      body.appendChild(list);
+
+      function renderOptions() {
+        const val = relOptionValue(cfg);
+        Array.from(list.children).forEach((btn) => {
+          const on = cfg.type === "single" ? val === btn.dataset.value : val.indexOf(btn.dataset.value) >= 0;
+          btn.setAttribute(cfg.type === "single" ? "aria-checked" : "aria-pressed", on ? "true" : "false");
+        });
+        syncOtherField();
+        updateNextLabel();
+      }
+
+      list.addEventListener("click", (e) => {
+        const btn = e.target.closest(".option");
+        if (!btn) return;
+        if (cfg.type === "single") {
+          state.relInvestigation[cfg.stateKey] = btn.dataset.value;
+        } else {
+          const arr = state.relInvestigation[cfg.stateKey];
+          const i = arr.indexOf(btn.dataset.value);
+          if (i >= 0) {
+            arr.splice(i, 1);
+          } else {
+            if (cfg.max && arr.length >= cfg.max) { vibrate(15); return; }
+            arr.push(btn.dataset.value);
+          }
+        }
+        saveState();
+        renderOptions();
+        vibrate(6);
+      });
+
+      section._relRender = renderOptions;
+    } else if (cfg.type === "sliders") {
+      const wrap = document.createElement("div");
+      wrap.className = "rel-dyn-sliders";
+      cfg.sliders.forEach((s) => {
+        const row = document.createElement("div");
+        row.innerHTML =
+          '<div class="rel-dyn-slider__label"><span>' + s.label + '</span><b></b></div>' +
+          '<input class="slider" type="range" min="0" max="10" step="1">';
+        wrap.appendChild(row);
+        const input = row.querySelector("input");
+        const out = row.querySelector("b");
+        input.value = state.relInvestigation.importantFactors[s.key];
+        out.textContent = input.value;
+        input.style.setProperty("--fill", (Number(input.value) / 10) * 100 + "%");
+        input.addEventListener("input", () => {
+          out.textContent = input.value;
+          input.style.setProperty("--fill", (Number(input.value) / 10) * 100 + "%");
+          state.relInvestigation.importantFactors[s.key] = Number(input.value);
+          saveState();
+        });
+      });
+      body.appendChild(wrap);
+      nextBtn.textContent = "Далее";
+    }
+
+    if (cfg.other) {
+      const textarea = section.querySelector(".rel-dyn-other textarea");
+      textarea.value = state.relInvestigation[cfg.otherKey] || "";
+      textarea.addEventListener("input", () => {
+        state.relInvestigation[cfg.otherKey] = textarea.value;
+        saveState();
+      });
+    }
+
+    const nextId = idx === total - 1 ? "rel-results" : relRoute()[idx + 1].id;
+    nextBtn.addEventListener("click", () => {
+      saveState();
+      goTo(nextId);
+    });
+
+    section._relSyncAll = function () {
+      if (section._relRender) section._relRender();
+      if (cfg.other) syncOtherField();
+      updateNextLabel();
+    };
+
+    return section;
+  }
+
+  function relRenderAllDynamicScreens() {
+    document.querySelectorAll('[data-rel-dynamic="1"]').forEach((el) => el.remove());
+    const route = relRoute();
+    let anchor = $('[data-screen="rel-why-now"]');
+    route.forEach((cfg, idx) => {
+      const section = relBuildScreen(cfg, idx, route.length);
+      section.dataset.relDynamic = "1";
+      section._relSyncAll();
+      anchor.after(section);
+      anchor = section;
+    });
+  }
+
   /* ---------------- navigation ---------------- */
 
-  const screens = $$(".screen");
-  const tabItems = $$(".tabbar__item");
+  let screens = $$(".screen");
+  let tabItems = $$(".tabbar__item");
+
+  function relRefreshRoute() {
+    state.relInvestigation.branch = relComputeBranch();
+    relRenderAllDynamicScreens();
+    screens = $$(".screen");
+    tabItems = $$(".tabbar__item");
+  }
+  relRefreshRoute();
 
   function goTo(name, opts) {
     opts = opts || {};
@@ -121,6 +515,7 @@
     if (name === "results") renderResults();
     if (name === "history") renderHistory();
     if (name === "profile") renderProfile();
+    if (name === "rel-results") renderRelResults();
 
     const active = $('.screen[data-screen="' + name + '"]');
     if (active) active.scrollTop = 0;
@@ -304,6 +699,40 @@
   if (relSituationNextBtn) {
     relSituationNextBtn.addEventListener("click", () => {
       saveState();
+      goTo("rel-current-rating");
+    });
+  }
+
+  // — current rating: 0-10 slider + free-text reasons —
+  const ratingSlider = $("#ratingSlider");
+  const ratingValueEl = $("#ratingValue");
+  const ratingNote = $("#ratingNote");
+
+  function updateRatingDisplay() {
+    ratingValueEl.textContent = ratingSlider.value;
+    ratingSlider.style.setProperty("--fill", (Number(ratingSlider.value) / 10) * 100 + "%");
+  }
+
+  if (ratingSlider) {
+    ratingSlider.value = state.relInvestigation.currentRating != null ? state.relInvestigation.currentRating : 4;
+    updateRatingDisplay();
+    ratingSlider.addEventListener("input", () => {
+      updateRatingDisplay();
+      state.relInvestigation.currentRating = Number(ratingSlider.value);
+      saveState();
+    });
+  }
+  if (ratingNote) {
+    ratingNote.value = state.relInvestigation.currentRatingNote || "";
+    ratingNote.addEventListener("input", () => {
+      state.relInvestigation.currentRatingNote = ratingNote.value;
+      saveState();
+    });
+  }
+  const relRatingNextBtn = $("#relRatingNext");
+  if (relRatingNextBtn) {
+    relRatingNextBtn.addEventListener("click", () => {
+      saveState();
       goTo("rel-goal");
     });
   }
@@ -350,6 +779,7 @@
   if (relGoalNextBtn) {
     relGoalNextBtn.addEventListener("click", () => {
       saveState();
+      relRefreshRoute();
       goTo("rel-benefit");
     });
   }
@@ -462,17 +892,22 @@
 
   renderRelWhyNow();
 
+  function relFirstDynamicScreenId() {
+    const route = relRoute();
+    return route.length ? route[0].id : "rel-results";
+  }
+
   const relWhyNowNextBtn = $("#relWhyNowNext");
   if (relWhyNowNextBtn) {
     relWhyNowNextBtn.addEventListener("click", () => {
       saveState();
-      goTo("directions");
+      goTo(relFirstDynamicScreenId());
     });
   }
   $$(".rel-hit--s7-skip").forEach((btn) => {
     btn.addEventListener("click", () => {
       saveState();
-      goTo("directions");
+      goTo(relFirstDynamicScreenId());
     });
   });
 
@@ -598,6 +1033,20 @@
     const meta = CATEGORY_META.relationships;
     const inv = state.relInvestigation;
     const started = !!(inv && (inv.problemDescription.trim() || Object.values(inv.profile).some((v) => v && v.trim && v.trim())));
+    const finished = !!(state.answers.relationships && state.answers.relationships.done);
+
+    if (finished) {
+      return (
+        '<div class="result-card result-card--' + meta.cls + '">' +
+          '<div class="result-card__head">' +
+            '<span class="result-card__title">' + meta.label + "</span>" +
+            '<span class="result-card__badge">пройдено</span>' +
+          "</div>" +
+          '<p class="result-card__text">' + (state.answers.relationships.summary || "Расследование завершено.") + "</p>" +
+          '<button class="chip-btn" type="button" data-goto-quiz="rel-results">Смотреть карту улик</button>' +
+        "</div>"
+      );
+    }
 
     if (!started) {
       return (
@@ -608,7 +1057,7 @@
           "</div>" +
           '<div class="result-card__locked">' +
             "<p>Дело ещё не открыто.</p>" +
-            '<button class="chip-btn" type="button" data-goto-quiz="rel-case-intro">Пройти</button>' +
+            '<button class="chip-btn" type="button" data-goto-quiz="rel-case-open">Пройти</button>' +
           "</div>" +
         "</div>"
       );
@@ -621,9 +1070,139 @@
           '<span class="result-card__badge">в процессе</span>' +
         "</div>" +
         '<p class="result-card__text">Расследование начато. Следующие материалы дела появятся здесь по мере прохождения.</p>' +
-        '<button class="chip-btn" type="button" data-goto-quiz="rel-case-intro">Продолжить</button>' +
+        '<button class="chip-btn" type="button" data-goto-quiz="rel-case-open">Продолжить</button>' +
       "</div>"
     );
+  }
+
+  function relListText(arr, otherKey) {
+    const list = (arr || []).slice();
+    const otherIdx = list.indexOf("Другое");
+    if (otherIdx >= 0) {
+      const otherText = otherKey && state.relInvestigation[otherKey] ? state.relInvestigation[otherKey] : "";
+      list[otherIdx] = otherText ? "Другое (" + otherText + ")" : "Другое";
+    }
+    return list.join(", ");
+  }
+
+  function relValueText(value, otherKey) {
+    if (!value) return "";
+    if (value === "Другое" && otherKey && state.relInvestigation[otherKey]) {
+      return "Другое (" + state.relInvestigation[otherKey] + ")";
+    }
+    return value;
+  }
+
+  function relMapBlock(title, text, opts) {
+    opts = opts || {};
+    if (!text) {
+      return '<div class="rel-map-block"><p class="rel-map-block__title">' + title + '</p><p class="rel-map-block__text rel-map-empty">Пока нет данных</p></div>';
+    }
+    return '<div class="rel-map-block' + (opts.cls ? " " + opts.cls : "") + '"><p class="rel-map-block__title">' + title + '</p><p class="rel-map-block__text">' + text + "</p></div>";
+  }
+
+  function relBuildHypotheses() {
+    const inv = state.relInvestigation;
+    const items = [];
+
+    const familyIssues = (inv.familyModel || []).filter((v) => v !== "Любовь и поддержка" && v !== "Другое");
+    if (familyIssues.length) {
+      items.push("В семье ты наблюдал(а): " + relListText(familyIssues) + " — возможно, часть текущего сценария связана с этой моделью отношений. Это рабочая гипотеза, которую стоит проверить, а не готовый диагноз.");
+    }
+    if ((inv.beliefs || []).length) {
+      items.push("В детстве сформировались убеждения: " + relListText(inv.beliefs, "beliefsOther") + " — они могут неосознанно влиять на выбор партнёров и реакции в отношениях. Стоит проверить, насколько это так на самом деле.");
+    }
+    if ((inv.repeatingScenario || []).length) {
+      items.push("Замечен повторяющийся сценарий: " + relListText(inv.repeatingScenario, "repeatingScenarioOther") + " — вероятно, за этим стоит общий паттерн. Направление для дальнейшего расследования.");
+    }
+    if (inv.mainFear) {
+      items.push("Главный страх — «" + relValueText(inv.mainFear, "mainFearOther") + "»" + (inv.fearReaction ? ", а типичная реакция на него — «" + relValueText(inv.fearReaction, "fearReactionOther") + "»" : "") + ". Это может формировать поведение в похожих ситуациях — гипотеза для проверки.");
+    }
+    if ((inv.influence || []).length) {
+      items.push("На видение отношений сильнее всего повлияли: " + relListText(inv.influence, "influenceOther") + " — одно из направлений, которое имеет смысл исследовать глубже.");
+    }
+    return items;
+  }
+
+  function relResultsSummaryText() {
+    const inv = state.relInvestigation;
+    const goal = relValueText(inv.goalDirection, "goalDirectionOther");
+    return goal ? "Цель расследования: " + goal : "Расследование завершено.";
+  }
+
+  function finishRelInvestigation() {
+    if (state.answers.relationships && state.answers.relationships.done) return;
+    const summary = relResultsSummaryText();
+    state.answers.relationships = { done: true, summary };
+    pushHistory("relationships", summary);
+    saveState();
+  }
+
+  function renderRelResults() {
+    finishRelInvestigation();
+    const inv = state.relInvestigation;
+    const relResultsBody = $("#relResultsBody");
+    if (!relResultsBody) return;
+
+    const whereNow = [
+      relValueText(inv.situationCategory, "situationCategoryOther"),
+      inv.currentRating != null ? "Оценка текущих отношений: " + inv.currentRating + " из 10" + (inv.currentRatingNote ? " (" + inv.currentRatingNote + ")" : "") : ""
+    ].filter(Boolean).join(". ");
+
+    const whatIWant = [
+      relValueText(inv.goalDirection, "goalDirectionOther"),
+      relListText(inv.resultBenefits, "resultBenefitsOther") ? "Это даст: " + relListText(inv.resultBenefits, "resultBenefitsOther") : ""
+    ].filter(Boolean).join(". ");
+
+    const whatStopsMe = [
+      relListText(inv.obstacles, "obstaclesOther"),
+      relListText(inv.boundaries, "boundariesOther") ? "Неприемлемо: " + relListText(inv.boundaries, "boundariesOther") : "",
+      inv.mainFear ? "Главный страх: " + relValueText(inv.mainFear, "mainFearOther") : ""
+    ].filter(Boolean).join(". ");
+
+    const repeating = relListText(inv.repeatingScenario, "repeatingScenarioOther");
+
+    const whereFormed = [
+      inv.problemOnset ? "Похоже, началось: " + relValueText(inv.problemOnset, "problemOnsetOther") : "",
+      relListText(inv.familyModel, "familyModelOther") ? "Модель в семье: " + relListText(inv.familyModel, "familyModelOther") : "",
+      relListText(inv.influence, "influenceOther") ? "Повлияли: " + relListText(inv.influence, "influenceOther") : ""
+    ].filter(Boolean).join(". ");
+
+    const nextToExplore = [
+      relListText(inv.role, "roleOther") ? "Твои привычные роли: " + relListText(inv.role, "roleOther") : "",
+      relListText(inv.externalInfluence, "externalInfluenceOther") ? "Внешнее влияние: " + relListText(inv.externalInfluence, "externalInfluenceOther") : "",
+      relValueText(inv.children, "childrenOther") ? "Дети: " + relValueText(inv.children, "childrenOther") : ""
+    ].filter(Boolean).join(". ");
+
+    const hypotheses = relBuildHypotheses();
+    const hypothesesHtml = hypotheses.length
+      ? '<div class="rel-map-block rel-map-block--hypotheses"><p class="rel-map-block__title">Первые улики / рабочие гипотезы</p><ul class="rel-map-block__list">' +
+          hypotheses.map((h) => "<li>" + h + "</li>").join("") +
+        "</ul></div>"
+      : relMapBlock("Первые улики / рабочие гипотезы", "");
+
+    let html = "";
+    html += relMapBlock("Где я сейчас", whereNow);
+    html += relMapBlock("Чего я хочу", whatIWant);
+    html += relMapBlock("Что мне мешает", whatStopsMe);
+    html += relMapBlock("Что повторяется", repeating);
+    html += relMapBlock("Где могла формироваться причина", whereFormed);
+    html += hypothesesHtml;
+    html += relMapBlock("Что исследовать дальше", nextToExplore);
+
+    html +=
+      '<div class="rel-cta">' +
+        '<p class="rel-cta__title">Продолжи расследование вместе с Евгением Дымой</p>' +
+        '<ul class="rel-cta__list">' +
+          "<li>Разбор твоей истории</li>" +
+          "<li>Проверка гипотез через гипноз</li>" +
+          "<li>Поиск глубинных причин</li>" +
+          "<li>Персональная стратегия и план</li>" +
+        "</ul>" +
+        '<button class="btn btn--primary btn--lg" type="button" data-nav="profile">Записаться на консультацию</button>' +
+      "</div>";
+
+    relResultsBody.innerHTML = html;
   }
 
   function categoryCardHtml(cat) {
@@ -753,12 +1332,15 @@
       }
       if (relOtherInput) relOtherInput.value = "";
       renderRelSituation();
+      if (ratingSlider) { ratingSlider.value = 4; updateRatingDisplay(); }
+      if (ratingNote) ratingNote.value = "";
       if (relGoalOtherInput) relGoalOtherInput.value = "";
       renderRelGoal();
       if (relBenefitOtherInput) relBenefitOtherInput.value = "";
       renderRelBenefits();
       if (relWhyNowOtherInput) relWhyNowOtherInput.value = "";
       renderRelWhyNow();
+      relRefreshRoute();
       moneySlider.value = 15000;
       updateMoneyDisplay();
       renderProfile();
@@ -851,7 +1433,14 @@
     if (startBtn) { goTo("directions"); return; }
 
     const doorBtn = e.target.closest("[data-open]");
-    if (doorBtn) { goTo(doorBtn.dataset.open); return; }
+    if (doorBtn) {
+      if (doorBtn.dataset.open === "rel-question-1" && !state.relInvestigation.startedAt) {
+        state.relInvestigation.startedAt = Date.now();
+        saveState();
+      }
+      goTo(doorBtn.dataset.open);
+      return;
+    }
 
     const backBtn = e.target.closest("[data-back]");
     if (backBtn) { goTo(backBtn.dataset.back); return; }

@@ -75,20 +75,10 @@
   </section>
 
   <!-- ============ START ============ -->
-  <section class="screen screen--start" data-screen="start" aria-label="Заставка">
-    <div class="start-bg" aria-hidden="true">
-      <img class="start-bg__img" src="assets/scenes/start-door.svg" alt="" width="400" height="560">
-      <div class="start-bg__fade"></div>
-    </div>
-
-    <div class="start-content">
-      <p class="eyebrow">— опросник —</p>
-      <h1 class="start-title">Взломай<br><span>код судьбы</span></h1>
-      <p class="start-tag">Твоя жизнь — это код.<br>Узнай его.</p>
-      <p class="start-tag start-tag--dim">Деньги · Отношения · Здоровье · Архив рода</p>
-
-      <button class="btn btn--gold btn--lg" type="button" data-action="start">Старт</button>
-      <p class="start-hint">Ты готов узнать правду?</p>
+  <section class="screen screen--relshot theme-rel" data-screen="start" aria-label="Евгений Дыма — гипнодетектив">
+    <div class="rel-shot">
+      <img src="assets/reference/relationships/00-evgeniy-hypnodetective.png" alt="Евгений Дыма — гипнодетектив, детектив причин" width="1024" height="1536">
+      <button class="rel-hit rel-hit--evgeniy-start" type="button" data-action="start" aria-label="Начать расследование"></button>
     </div>
   </section>
 
@@ -99,7 +89,7 @@
       <div class="scene__fade"></div>
     </div>
     <header class="topbar topbar--plain">
-      <h2 class="topbar__title">Выбери своё направление</h2>
+      <h2 class="topbar__title">Выбери направление расследования</h2>
     </header>
 
     <div class="screen__body">
@@ -112,7 +102,7 @@
           <span class="door__sub">Финансы и изобилие</span>
         </button>
 
-        <button class="door door--rel" type="button" data-open="rel-case-intro">
+        <button class="door door--rel" type="button" data-open="rel-case-open">
           <span class="door__icon" aria-hidden="true">
             <svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-10-9.2C.6 8.4 2.2 5 5.7 5c2 0 3.4 1 4.8 2.6C11.9 6 13.3 5 15.3 5c3.5 0 5.1 3.4 3.7 6.8C16.5 16.4 12 21 12 21z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
           </span>
@@ -173,11 +163,24 @@
     </div>
   </section>
 
-  <!-- ============ RELATIONSHIPS: SCREEN 1 — approved reference image ============ -->
-  <section class="screen screen--relshot theme-rel" data-screen="rel-case-intro" aria-label="Дело «Отношения»">
-    <div class="rel-shot">
-      <img src="assets/reference/relationships/01-relationships-start.png" alt="Взломай код судьбы — Отношения" width="1024" height="1536">
-      <button class="rel-hit rel-hit--s1-start" type="button" data-open="rel-question-1" aria-label="Старт"></button>
+  <!-- ============ RELATIONSHIPS: CASE OPEN ============ -->
+  <section class="screen screen--quiz theme-rel" data-screen="rel-case-open" aria-label="Дело «Отношения» открыто">
+    <div class="screen__body screen__body--center case-open">
+      <p class="case-open__eyebrow">Дело открыто</p>
+      <p class="case-open__number">№R-34521</p>
+      <div class="case-open__folder" aria-hidden="true">
+        <svg viewBox="0 0 64 64" width="72" height="72">
+          <path d="M8 16c0-2.2 1.8-4 4-4h14l4 5h22c2.2 0 4 1.8 4 4v29c0 2.2-1.8 4-4 4H12c-2.2 0-4-1.8-4-4V16z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>
+          <path d="M8 24h48" stroke="currentColor" stroke-width="1.4" opacity=".5"/>
+          <path d="M26 34a6 6 0 1 1 12 0 6 6 0 0 1-12 0z" fill="none" stroke="currentColor" stroke-width="2"/>
+          <path d="M32 38v9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <p class="question case-open__title">Отношения</p>
+      <p class="family-copy">Мы начинаем расследование твоей истории отношений</p>
+
+      <button class="btn btn--primary btn--lg" type="button" data-open="rel-question-1">Начать</button>
+      <p class="case-open__duration">Это займёт 10–15 минут</p>
     </div>
   </section>
 
@@ -186,7 +189,7 @@
     <div class="rel-shot">
       <img src="assets/reference/relationships/02-relationships-problem.png" alt="Что именно у вас не получается?" width="1024" height="1536">
 
-      <button class="rel-hit rel-hit--s2-back" type="button" data-back="rel-case-intro" aria-label="Назад"></button>
+      <button class="rel-hit rel-hit--s2-back" type="button" data-back="rel-case-open" aria-label="Назад"></button>
 
       <div class="rel-q-box">
         <textarea id="relSituation" maxlength="1000" placeholder="Напишите здесь…" aria-label="Что именно у вас не получается?"></textarea>
@@ -287,12 +290,46 @@
     </div>
   </section>
 
+  <!-- ============ RELATIONSHIPS: CURRENT RATING ============ -->
+  <section class="screen screen--quiz theme-rel" data-screen="rel-current-rating" aria-label="Отношения — оценка текущей ситуации">
+    <header class="topbar">
+      <button class="iconbtn" type="button" data-back="rel-outcome" aria-label="Назад">
+        <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <h2 class="topbar__title">Отношения</h2>
+      <span class="iconbtn iconbtn--ghost" aria-hidden="true"></span>
+    </header>
+
+    <div class="screen__body">
+      <p class="question">Оцени текущие отношения</p>
+      <p class="question-hint">Поставь оценку от 0 до 10</p>
+
+      <div class="money-value" id="ratingValue">4</div>
+      <p class="money-caption">из 10</p>
+
+      <div class="slider-wrap">
+        <input class="slider" id="ratingSlider" type="range" min="0" max="10" step="1" value="4" aria-label="Оценка текущих отношений">
+        <div class="slider-labels">
+          <span>0</span>
+          <span>10</span>
+        </div>
+      </div>
+
+      <label class="field__label rel-field-gap" for="ratingNote">Что влияет на такую оценку?</label>
+      <textarea class="textarea" id="ratingNote" maxlength="500" placeholder="Напиши здесь…" aria-label="Что влияет на такую оценку?"></textarea>
+    </div>
+
+    <div class="screen__footer">
+      <button class="btn btn--primary btn--lg" type="button" id="relRatingNext">Далее</button>
+    </div>
+  </section>
+
   <!-- ============ RELATIONSHIPS: SCREEN 5 — approved reference image ============ -->
   <section class="screen screen--relshot theme-rel" data-screen="rel-goal" aria-label="Отношения — чего ты хочешь добиться">
     <div class="rel-shot">
       <img src="assets/reference/relationships/05-relationships-goal-direction.png" alt="Чего ты хочешь добиться в отношениях?" width="1024" height="1536">
 
-      <button class="rel-hit rel-hit--s5-back" type="button" data-back="rel-outcome" aria-label="Назад"></button>
+      <button class="rel-hit rel-hit--s5-back" type="button" data-back="rel-current-rating" aria-label="Назад"></button>
 
       <button class="rel-hit rel-row5 rel-row5--0" type="button" role="radio" aria-checked="false" data-value="Хочу встретить любовь и создать отношения" aria-label="Хочу встретить любовь и создать отношения"></button>
       <button class="rel-hit rel-row5 rel-row5--1" type="button" role="radio" aria-checked="false" data-value="Хочу выйти замуж / жениться" aria-label="Хочу выйти замуж / жениться"></button>
@@ -414,6 +451,14 @@
       <label class="field__label" for="relWhyNowOtherInput">Свой вариант</label>
       <textarea id="relWhyNowOtherInput" maxlength="200" placeholder="Напиши свой вариант…"></textarea>
     </div>
+  </section>
+
+  <!-- ============ RELATIONSHIPS: RESULTS MAP ============ -->
+  <section class="screen screen--page theme-rel" data-screen="rel-results" aria-label="Отношения — карта улик">
+    <header class="topbar topbar--plain">
+      <h2 class="topbar__title">Карта улик — Отношения</h2>
+    </header>
+    <div class="screen__body" id="relResultsBody"></div>
   </section>
 
   <!-- ============ HEALTH ============ -->
