@@ -36,7 +36,11 @@
         situationCategory: "",
         situationCategoryOther: "",
         goalDirection: "",
-        goalDirectionOther: ""
+        goalDirectionOther: "",
+        resultBenefits: [],
+        resultBenefitsOther: "",
+        whyNow: "",
+        whyNowOther: ""
       }
     };
   }
@@ -51,7 +55,8 @@
         answers: Object.assign({}, parsed.answers),
         history: Array.isArray(parsed.history) ? parsed.history : [],
         relInvestigation: Object.assign({}, base.relInvestigation, parsed.relInvestigation, {
-          profile: Object.assign({}, base.relInvestigation.profile, parsed.relInvestigation && parsed.relInvestigation.profile)
+          profile: Object.assign({}, base.relInvestigation.profile, parsed.relInvestigation && parsed.relInvestigation.profile),
+          resultBenefits: Array.isArray(parsed.relInvestigation && parsed.relInvestigation.resultBenefits) ? parsed.relInvestigation.resultBenefits : []
         })
       });
     } catch (e) {
@@ -345,9 +350,131 @@
   if (relGoalNextBtn) {
     relGoalNextBtn.addEventListener("click", () => {
       saveState();
+      goTo("rel-benefit");
+    });
+  }
+
+  // — screen 6: up to 3 result-benefit cards, "Другое" reveals a real text field —
+  const BENEFIT_MAX = 3;
+  const relCards6 = $$(".rel-card6");
+  const relBenefitNextLabel = $("#relBenefitNextLabel");
+  const relBenefitOtherWrap = $("#relBenefitOtherWrap");
+  const relBenefitOtherInput = $("#relBenefitOtherInput");
+
+  function relBenefits() {
+    return state.relInvestigation.resultBenefits;
+  }
+
+  function renderRelBenefits() {
+    const selected = relBenefits();
+    relCards6.forEach((card, i) => {
+      const on = selected.includes(card.dataset.value);
+      card.setAttribute("aria-pressed", on ? "true" : "false");
+      const radio = $(".rel-radio6--" + i);
+      if (radio) radio.classList.toggle("is-checked", on);
+    });
+    if (relBenefitNextLabel) relBenefitNextLabel.textContent = "ДАЛЕЕ (" + selected.length + "/" + BENEFIT_MAX + ")";
+
+    const otherCard = relCards6.find((c) => c.dataset.other === "true");
+    const otherOn = otherCard && otherCard.getAttribute("aria-pressed") === "true";
+    if (relBenefitOtherWrap) relBenefitOtherWrap.hidden = !otherOn;
+  }
+
+  if (relBenefitOtherInput) {
+    relBenefitOtherInput.value = state.relInvestigation.resultBenefitsOther || "";
+    relBenefitOtherInput.addEventListener("input", () => {
+      state.relInvestigation.resultBenefitsOther = relBenefitOtherInput.value;
+      saveState();
+    });
+  }
+
+  relCards6.forEach((card) => {
+    card.addEventListener("click", () => {
+      const selected = relBenefits();
+      const value = card.dataset.value;
+      const idx = selected.indexOf(value);
+      if (idx >= 0) {
+        selected.splice(idx, 1);
+      } else {
+        if (selected.length >= BENEFIT_MAX) {
+          vibrate(15);
+          return;
+        }
+        selected.push(value);
+      }
+      saveState();
+      renderRelBenefits();
+      vibrate(6);
+    });
+  });
+
+  renderRelBenefits();
+
+  const relBenefitNextBtn = $("#relBenefitNext");
+  if (relBenefitNextBtn) {
+    relBenefitNextBtn.addEventListener("click", () => {
+      saveState();
+      goTo("rel-why-now");
+    });
+  }
+  $$(".rel-hit--s6-skip").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      saveState();
+      goTo("rel-why-now");
+    });
+  });
+
+  // — screen 7: single-select why-now row, "Другое" reveals a real text field —
+  const relRows7 = $$(".rel-row7");
+  const relWhyNowOtherWrap = $("#relWhyNowOtherWrap");
+  const relWhyNowOtherInput = $("#relWhyNowOtherInput");
+
+  function renderRelWhyNow() {
+    const selected = state.relInvestigation.whyNow;
+    relRows7.forEach((row, i) => {
+      const on = row.dataset.value === selected && selected !== "";
+      row.setAttribute("aria-checked", on ? "true" : "false");
+      const radio = $(".rel-radio7--" + i);
+      if (radio) radio.classList.toggle("is-checked", on);
+    });
+
+    const otherRow = relRows7.find((r) => r.dataset.other === "true");
+    const otherOn = otherRow && otherRow.getAttribute("aria-checked") === "true";
+    if (relWhyNowOtherWrap) relWhyNowOtherWrap.hidden = !otherOn;
+  }
+
+  if (relWhyNowOtherInput) {
+    relWhyNowOtherInput.value = state.relInvestigation.whyNowOther || "";
+    relWhyNowOtherInput.addEventListener("input", () => {
+      state.relInvestigation.whyNowOther = relWhyNowOtherInput.value;
+      saveState();
+    });
+  }
+
+  relRows7.forEach((row) => {
+    row.addEventListener("click", () => {
+      state.relInvestigation.whyNow = row.dataset.value;
+      saveState();
+      renderRelWhyNow();
+      vibrate(6);
+    });
+  });
+
+  renderRelWhyNow();
+
+  const relWhyNowNextBtn = $("#relWhyNowNext");
+  if (relWhyNowNextBtn) {
+    relWhyNowNextBtn.addEventListener("click", () => {
+      saveState();
       goTo("directions");
     });
   }
+  $$(".rel-hit--s7-skip").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      saveState();
+      goTo("directions");
+    });
+  });
 
   /* ---------------- health screen ---------------- */
 
@@ -628,6 +755,10 @@
       renderRelSituation();
       if (relGoalOtherInput) relGoalOtherInput.value = "";
       renderRelGoal();
+      if (relBenefitOtherInput) relBenefitOtherInput.value = "";
+      renderRelBenefits();
+      if (relWhyNowOtherInput) relWhyNowOtherInput.value = "";
+      renderRelWhyNow();
       moneySlider.value = 15000;
       updateMoneyDisplay();
       renderProfile();
