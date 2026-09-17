@@ -19,10 +19,6 @@
     return "R-" + Math.floor(10000 + Math.random() * 90000);
   }
 
-  const REL_ARRAY_FIELDS = [
-    "resultBenefits", "desiredFeelings", "obstacles", "repeatingScenario",
-    "role", "boundaries", "familyModel", "influence", "externalInfluence", "beliefs"
-  ];
 
   function defaultState() {
     return {
@@ -83,9 +79,81 @@
         externalInfluence: [],
         externalInfluenceOther: "",
         beliefs: [],
-        beliefsOther: ""
+        beliefsOther: "",
+        gender: "",
+        lifestyle: {
+          workHours: "",
+          travelFrequency: "",
+          livingWith: "",
+          livingWithOther: "",
+          housing: "",
+          housingOther: ""
+        },
+        finance: {
+          monthlyIncome: { amount: "", currency: "EUR" },
+          incomeStability: "",
+          obligations: [],
+          obligationsOther: "",
+          lifeAffordability: 5,
+          familyAffordability: "",
+          relationshipConflict: "",
+          relationshipConflictDetail: ""
+        },
+        sex: {
+          lastTime: "",
+          withWhom: "",
+          withWhomOther: "",
+          obstacles: [],
+          obstaclesOther: "",
+          orgasm: ""
+        },
+        fidelity: {
+          history: [],
+          historyOther: "",
+          frequency: ""
+        },
+        jealousy: {
+          patterns: [],
+          patternsOther: "",
+          lossReaction: [],
+          lossReactionOther: ""
+        },
+        dependencies: {
+          current: [],
+          currentOther: "",
+          family: [],
+          familyOther: ""
+        },
+        childrenGoalsAligned: "",
+        childhood: {
+          familyLeader: "",
+          father: {
+            authority: "", punishment: "", punishmentDescription: "",
+            insults: "", worstMemory: "", bestMemory: ""
+          },
+          mother: {
+            authority: "", punishment: "", punishmentDescription: "",
+            insults: "", worstMemory: "", bestMemory: ""
+          },
+          homeFears: [],
+          homeFearsOther: "",
+          worstOverallMemory: "",
+          bestOverallMemory: ""
+        }
       }
     };
+  }
+
+  function relDeepMerge(base, patch) {
+    if (Array.isArray(base)) return Array.isArray(patch) ? patch : base;
+    if (base && typeof base === "object") {
+      const out = Object.assign({}, base);
+      if (patch && typeof patch === "object") {
+        Object.keys(base).forEach((k) => { out[k] = relDeepMerge(base[k], patch[k]); });
+      }
+      return out;
+    }
+    return patch !== undefined && patch !== null ? patch : base;
   }
 
   function loadState() {
@@ -95,17 +163,11 @@
       const parsed = JSON.parse(raw);
       const base = defaultState();
       const parsedRel = parsed.relInvestigation || {};
-      const relArrays = {};
-      REL_ARRAY_FIELDS.forEach((key) => {
-        relArrays[key] = Array.isArray(parsedRel[key]) ? parsedRel[key] : [];
-      });
       return Object.assign(base, parsed, {
         answers: Object.assign({}, parsed.answers),
         history: Array.isArray(parsed.history) ? parsed.history : [],
-        relInvestigation: Object.assign({}, base.relInvestigation, parsedRel, relArrays, {
-          caseId: parsedRel.caseId || base.relInvestigation.caseId,
-          profile: Object.assign({}, base.relInvestigation.profile, parsedRel.profile),
-          importantFactors: Object.assign({}, base.relInvestigation.importantFactors, parsedRel.importantFactors)
+        relInvestigation: Object.assign(relDeepMerge(base.relInvestigation, parsedRel), {
+          caseId: parsedRel.caseId || base.relInvestigation.caseId
         })
       });
     } catch (e) {
@@ -248,6 +310,82 @@
 
   const REL_QUESTIONS = [
     {
+      id: "rel-gender", type: "single",
+      question: "Укажи свой пол",
+      hint: "Это нужно, чтобы точнее подобрать некоторые вопросы дальше",
+      options: ["Женский", "Мужской", "Предпочитаю не указывать"],
+      stateKey: "gender"
+    },
+    {
+      id: "rel-work-hours", type: "single",
+      question: "Сколько часов в день вы обычно работаете?",
+      options: ["Не работаю", "До 4 часов", "4–8 часов", "8–12 часов", "Больше 12 часов"],
+      stateKey: "lifestyle.workHours"
+    },
+    {
+      id: "rel-travel-frequency", type: "single",
+      question: "Как часто вы бываете в поездках или командировках?",
+      options: ["Практически никогда", "Иногда", "Часто", "Почти постоянно"],
+      stateKey: "lifestyle.travelFrequency"
+    },
+    {
+      id: "rel-living-with", type: "single",
+      question: "С кем вы сейчас живёте?",
+      options: ["Один/одна", "С партнёром", "С мужем/женой", "С детьми", "С родителями", "С родственниками", "Другое"],
+      other: true, stateKey: "lifestyle.livingWith", otherKey: "lifestyle.livingWithOther"
+    },
+    {
+      id: "rel-housing", type: "single",
+      question: "Какое у вас жильё?",
+      options: ["Собственное", "Ипотека", "Аренда", "Живу у партнёра", "Живу у родителей/родственников", "Социальное жильё", "Временное жильё", "Другое"],
+      other: true, stateKey: "lifestyle.housing", otherKey: "lifestyle.housingOther"
+    },
+    {
+      id: "rel-income", type: "text", textKind: "income",
+      question: "Какой у вас средний доход в месяц?",
+      hint: "Укажи сумму и валюту",
+      stateKey: "finance.monthlyIncome.amount", currencyKey: "finance.monthlyIncome.currency"
+    },
+    {
+      id: "rel-income-stability", type: "single",
+      question: "Насколько ваш доход стабилен?",
+      options: ["Стабильный", "Скорее стабильный", "Сильно меняется", "Сейчас практически нет дохода"],
+      stateKey: "finance.incomeStability"
+    },
+    {
+      id: "rel-financial-obligations", type: "multi",
+      question: "Есть ли у вас долги или серьёзные финансовые обязательства?",
+      hint: "Можно выбрать несколько",
+      options: ["Нет", "Кредит / ипотека", "Долги", "Алименты", "Содержание детей / родственников", "Бизнес-обязательства", "Другое"],
+      other: true, stateKey: "finance.obligations", otherKey: "finance.obligationsOther", exclusive: ["Нет"]
+    },
+    {
+      id: "rel-life-affordability", type: "sliders",
+      question: "Насколько ваш нынешний доход позволяет вам жить так, как вы хотите?",
+      hint: "Оцени от 0 до 10",
+      sliders: [{ key: "lifeAffordability", label: "Насколько доход позволяет жить так, как хочется" }],
+      stateKey: "finance"
+    },
+    {
+      id: "rel-family-affordability", type: "single",
+      question: "Можете ли вы сейчас финансово обеспечить тот формат отношений или семьи, который хотите?",
+      options: ["Да", "Скорее да", "Скорее нет", "Нет", "Не знаю"],
+      stateKey: "finance.familyAffordability"
+    },
+    {
+      id: "rel-money-conflicts", type: "single",
+      question: "Были ли деньги причиной конфликтов в ваших отношениях?",
+      options: ["Да, часто", "Иногда", "Нет", "Сейчас отношений нет"],
+      stateKey: "finance.relationshipConflict"
+    },
+    {
+      id: "rel-money-conflict-detail", type: "text", textKind: "textarea",
+      question: "Что именно происходило?",
+      placeholder: "Опиши своими словами…",
+      stateKey: "finance.relationshipConflictDetail",
+      skipIf: (inv) => !(inv.finance && (inv.finance.relationshipConflict === "Да, часто" || inv.finance.relationshipConflict === "Иногда"))
+    },
+    {
       id: "rel-desired-feelings", type: "multi",
       question: "Какие чувства тебе хочется испытывать рядом с партнёром?",
       hint: "Выбери всё, что откликается",
@@ -276,10 +414,86 @@
       other: true, stateKey: "fearReaction", otherKey: "fearReactionOther"
     },
     {
+      id: "rel-sex-last", type: "dual",
+      question: "Когда у вас последний раз был секс и с кем?",
+      groups: [
+        {
+          title: "Как давно",
+          stateKey: "sex.lastTime",
+          options: ["Сегодня", "Несколько дней назад", "В течение последнего месяца", "1–3 месяца назад", "3–6 месяцев назад", "6–12 месяцев назад", "Больше года назад", "Очень давно / не помню"]
+        },
+        {
+          title: "С кем",
+          stateKey: "sex.withWhom", other: true, otherKey: "sex.withWhomOther",
+          options: ["С мужем / женой", "С постоянным партнёром", "С любовником / любовницей", "С бывшим партнёром", "Со случайным знакомым", "С человеком, с которым периодически встречаюсь без отношений", "За деньги", "Самоудовлетворение", "Другое"]
+        }
+      ]
+    },
+    {
+      id: "rel-sex-obstacles", type: "multi",
+      question: "Есть ли что-то, что мешает вам получать удовольствие от секса?",
+      hint: "Можно выбрать несколько",
+      options: ["Нет", "Слабое сексуальное желание", "Практически нет желания", "Трудно возбудиться", "Секс стал механическим или без удовольствия", "Есть эмоциональная дистанция с партнёром", "Есть обида на партнёра", "Есть страх близости", "Избегаю секса", "Хочу секса чаще, чем партнёр", "Партнёр хочет секса чаще, чем я", "Другое"],
+      other: true, stateKey: "sex.obstacles", otherKey: "sex.obstaclesOther", exclusive: ["Нет"]
+    },
+    {
+      id: "rel-orgasm", type: "single",
+      question: "Испытываете ли вы оргазм во время секса?",
+      options: ["Практически всегда", "Часто", "Иногда", "Очень редко", "Никогда", "Только при самоудовлетворении"],
+      stateKey: "sex.orgasm",
+      skipIf: (inv) => inv.gender !== "Женский"
+    },
+    {
+      id: "rel-fidelity", type: "multi",
+      question: "Что из этого было в ваших отношениях?",
+      hint: "Можно выбрать несколько",
+      options: ["Я изменял(а)", "Мне изменяли", "Изменяли оба", "Были параллельные отношения", "Были случайные связи", "Были платные сексуальные контакты", "Был секс без отношений", "Ничего из этого", "Другое"],
+      other: true, stateKey: "fidelity.history", otherKey: "fidelity.historyOther", exclusive: ["Ничего из этого"]
+    },
+    {
+      id: "rel-fidelity-frequency", type: "single",
+      question: "Как часто это происходило?",
+      options: ["Один раз", "Несколько раз", "Периодически", "Это повторяется во многих отношениях"],
+      stateKey: "fidelity.frequency",
+      skipIf: (inv) => {
+        const h = (inv.fidelity && inv.fidelity.history) || [];
+        const triggers = ["Я изменял(а)", "Мне изменяли", "Изменяли оба", "Были параллельные отношения", "Были случайные связи"];
+        return !h.some((v) => triggers.indexOf(v) >= 0);
+      }
+    },
+    {
+      id: "rel-jealousy", type: "multi",
+      question: "Что происходит с ревностью и контролем в ваших отношениях?",
+      hint: "Можно выбрать несколько",
+      options: ["Я часто ревную партнёра", "Я проверяю партнёра", "Мне важно знать, где он/она и с кем", "Я боюсь, что партнёр мне изменит", "Я боюсь, что партнёр меня бросит", "Я стараюсь контролировать решения партнёра", "Партнёр ревнует меня", "Партнёр контролирует меня", "Партнёр проверяет мой телефон, переписки или местонахождение", "Мне говорили, что я слишком ревнивый(ая)", "Мне говорили, что я слишком контролирую", "Мне говорили, что я «душу» отношениями", "В прошлых отношениях происходило то же самое", "Ревности и контроля практически нет", "Другое"],
+      other: true, stateKey: "jealousy.patterns", otherKey: "jealousy.patternsOther", exclusive: ["Ревности и контроля практически нет"]
+    },
+    {
+      id: "rel-jealousy-loss-reaction", type: "multi",
+      question: "Что вы обычно делаете, когда боитесь потерять партнёра?",
+      hint: "Можно выбрать несколько",
+      options: ["Начинаю чаще писать или звонить", "Требую объяснений", "Проверяю", "Ревную", "Устраиваю конфликт", "Пытаюсь сильнее угодить", "Терплю то, что мне не нравится", "Замыкаюсь", "Отдаляюсь первым(ой)", "Угрожаю расставанием", "Сам(а) начинаю искать другого человека", "Изменяю", "Делаю вид, что мне всё равно", "Другое"],
+      other: true, stateKey: "jealousy.lossReaction", otherKey: "jealousy.lossReactionOther"
+    },
+    {
+      id: "rel-dependencies", type: "multi",
+      question: "Есть ли сейчас у вас что-либо из этого?",
+      hint: "Можно выбрать несколько",
+      options: ["Алкоголь", "Наркотики", "Азартные игры", "Ставки", "Компьютерные игры", "Порнография", "Постоянные случайные сексуальные связи", "Покупки / траты, которые трудно контролировать", "Ничего из этого", "Другое"],
+      other: true, stateKey: "dependencies.current", otherKey: "dependencies.currentOther", exclusive: ["Ничего из этого"]
+    },
+    {
+      id: "rel-dependencies-family", type: "multi",
+      question: "Было ли что-то из этого у ваших родителей или партнёров?",
+      hint: "Можно выбрать несколько",
+      options: ["У матери", "У отца", "У обоих родителей", "У нынешнего партнёра", "У бывших партнёров", "Не было", "Другое"],
+      other: true, stateKey: "dependencies.family", otherKey: "dependencies.familyOther", exclusive: ["Не было"]
+    },
+    {
       id: "rel-repeating-scenario", type: "multi",
       question: "Есть ли повторяющийся сценарий?",
       hint: "Выбери то, что повторяется",
-      options: ["Выбираю недоступных", "Одни и те же конфликты", "Отношения начинаются ярко, но быстро угасают", "Меня используют / манипулируют", "Я всё время спасаю партнёра", "Партнёры критикуют меня", "Измена или предательство", "Боюсь близости, отталкиваю", "Другое"],
+      options: ["Выбираю недоступных", "Одни и те же конфликты", "Отношения начинаются ярко, но быстро угасают", "Меня используют / манипулируют", "Я всё время спасаю партнёра", "Партнёры критикуют меня", "Измена или предательство", "Боюсь близости, отталкиваю", "Мне постоянно кажется, что партнёр может меня бросить", "Мне постоянно кажется, что мне могут изменить", "Мне говорят, что я слишком ревнивый(ая)", "Мне говорят, что я слишком контролирую", "Мне говорят, что я «душу» отношениями", "Я сам(а) отдаляюсь, когда отношения становятся слишком близкими", "Я первым(ой) разрываю отношения, чтобы меня не бросили", "Другое"],
       other: true, stateKey: "repeatingScenario", otherKey: "repeatingScenarioOther"
     },
     {
@@ -318,6 +532,12 @@
       other: true, stateKey: "children", otherKey: "childrenOther"
     },
     {
+      id: "rel-children-goals-aligned", type: "single",
+      question: "Совпадают ли ваши желания насчёт детей с желаниями партнёра?",
+      options: ["Да", "Нет", "Не знаю", "Сейчас партнёра нет"],
+      stateKey: "childrenGoalsAligned"
+    },
+    {
       id: "rel-family-model", type: "multi",
       question: "Какие отношения были в твоей семье?",
       hint: "Выбери то, что ты видел(а)",
@@ -351,6 +571,97 @@
       hint: "Выбери то, во что веришь до сих пор",
       options: ["Любовь нужно заслужить", "Любовь — это страдание", "Все мужчины / женщины одинаковые", "Меня не могут любить просто так", "Счастливые отношения — редкость", "Лучше быть одному(ой)", "Другое"],
       other: true, stateKey: "beliefs", otherKey: "beliefsOther"
+    },
+    {
+      id: "rel-childhood-family-leader", type: "single",
+      question: "Кто был главным в вашей семье?",
+      options: ["Мама", "Папа", "Оба примерно одинаково", "Бабушка или дедушка", "Другой человек", "Никто"],
+      stateKey: "childhood.familyLeader"
+    },
+    {
+      id: "rel-childhood-father-authority", type: "single",
+      question: "Папа был для вас авторитетом?",
+      options: ["Да", "Нет", "Иногда", "Папы практически не было рядом"],
+      stateKey: "childhood.father.authority"
+    },
+    {
+      id: "rel-childhood-father-punishment", type: "single",
+      question: "Папа применял к вам физические наказания?",
+      options: ["Нет", "Редко", "Иногда", "Часто"],
+      stateKey: "childhood.father.punishment"
+    },
+    {
+      id: "rel-childhood-father-punishment-desc", type: "text", textKind: "textarea",
+      question: "Опишите, как именно папа вас наказывал или бил.",
+      hint: "Например: рукой, ремнём, тапком, палкой, другим предметом; куда бил; что именно происходило",
+      stateKey: "childhood.father.punishmentDescription",
+      skipIf: (inv) => !inv.childhood || !inv.childhood.father || !inv.childhood.father.punishment || inv.childhood.father.punishment === "Нет"
+    },
+    {
+      id: "rel-childhood-father-insults", type: "text", textKind: "input",
+      question: "Какими обидными словами папа вас называл?",
+      stateKey: "childhood.father.insults", quickFill: "Не обзывал"
+    },
+    {
+      id: "rel-childhood-father-worst", type: "text", textKind: "textarea",
+      question: "Какой самый худший, болезненный или обидный момент с папой вы помните из жизни до 13 лет?",
+      stateKey: "childhood.father.worstMemory"
+    },
+    {
+      id: "rel-childhood-father-best", type: "text", textKind: "textarea",
+      question: "Какой самый лучший, счастливый момент с папой вы помните из жизни до 13 лет?",
+      stateKey: "childhood.father.bestMemory"
+    },
+    {
+      id: "rel-childhood-mother-authority", type: "single",
+      question: "Мама была для вас авторитетом?",
+      options: ["Да", "Нет", "Иногда", "Мамы практически не было рядом"],
+      stateKey: "childhood.mother.authority"
+    },
+    {
+      id: "rel-childhood-mother-punishment", type: "single",
+      question: "Мама применяла к вам физические наказания?",
+      options: ["Нет", "Редко", "Иногда", "Часто"],
+      stateKey: "childhood.mother.punishment"
+    },
+    {
+      id: "rel-childhood-mother-punishment-desc", type: "text", textKind: "textarea",
+      question: "Опишите, как именно мама вас наказывала или била.",
+      hint: "Например: рукой, ремнём, тапком, палкой, другим предметом; куда била; что именно происходило",
+      stateKey: "childhood.mother.punishmentDescription",
+      skipIf: (inv) => !inv.childhood || !inv.childhood.mother || !inv.childhood.mother.punishment || inv.childhood.mother.punishment === "Нет"
+    },
+    {
+      id: "rel-childhood-mother-insults", type: "text", textKind: "input",
+      question: "Какими обидными словами мама вас называла?",
+      stateKey: "childhood.mother.insults", quickFill: "Не обзывала"
+    },
+    {
+      id: "rel-childhood-mother-worst", type: "text", textKind: "textarea",
+      question: "Какой самый худший, болезненный или обидный момент с мамой вы помните из жизни до 13 лет?",
+      stateKey: "childhood.mother.worstMemory"
+    },
+    {
+      id: "rel-childhood-mother-best", type: "text", textKind: "textarea",
+      question: "Какой самый лучший, счастливый момент с мамой вы помните из жизни до 13 лет?",
+      stateKey: "childhood.mother.bestMemory"
+    },
+    {
+      id: "rel-childhood-home-fears", type: "multi", max: 3,
+      question: "Чего вы больше всего боялись дома в возрасте до 13 лет?",
+      hint: "Можно выбрать до 3",
+      options: ["Что меня будут бить или наказывать", "Что на меня будут кричать", "Пьяного отца", "Пьяную мать", "Что родители будут ссориться", "Что родители разведутся", "Что мама уйдёт", "Что папа уйдёт", "Остаться одному", "Сделать что-то неправильно", "Разочаровать родителей", "Что в семье не будет денег", "Ничего из этого", "Другое"],
+      other: true, stateKey: "childhood.homeFears", otherKey: "childhood.homeFearsOther", exclusive: ["Ничего из этого"]
+    },
+    {
+      id: "rel-childhood-worst-overall", type: "text", textKind: "textarea",
+      question: "Какой самый тяжёлый случай вообще произошёл с вами в жизни до 13 лет?",
+      stateKey: "childhood.worstOverallMemory"
+    },
+    {
+      id: "rel-childhood-best-overall", type: "text", textKind: "textarea",
+      question: "Какой самый счастливый момент вообще произошёл с вами в жизни до 13 лет?",
+      stateKey: "childhood.bestOverallMemory"
     }
   ];
 
@@ -363,117 +674,216 @@
     return relRoute().findIndex((s) => s.id === id);
   }
 
+  function relGet(path) {
+    if (!path) return undefined;
+    return path.split(".").reduce((o, k) => (o == null ? o : o[k]), state.relInvestigation);
+  }
+
+  function relSet(path, value) {
+    const parts = path.split(".");
+    let obj = state.relInvestigation;
+    for (let i = 0; i < parts.length - 1; i++) {
+      if (!obj[parts[i]] || typeof obj[parts[i]] !== "object") obj[parts[i]] = {};
+      obj = obj[parts[i]];
+    }
+    obj[parts[parts.length - 1]] = value;
+  }
+
   function relOptionValue(cfg) {
-    const v = state.relInvestigation[cfg.stateKey];
+    const v = relGet(cfg.stateKey);
     return Array.isArray(v) ? v : (v || "");
   }
 
-  function relBuildScreen(cfg, idx, total) {
+  function relApplicable(cfg) {
+    return !cfg.skipIf || !cfg.skipIf(state.relInvestigation);
+  }
+
+  function relApplicableRoute() {
+    return relRoute().filter(relApplicable);
+  }
+
+  function relNextId(id) {
+    const route = relRoute();
+    let i = route.findIndex((c) => c.id === id) + 1;
+    while (i < route.length) {
+      if (relApplicable(route[i])) return route[i].id;
+      i++;
+    }
+    return "rel-results-intro";
+  }
+
+  function relPrevId(id) {
+    const route = relRoute();
+    let i = route.findIndex((c) => c.id === id) - 1;
+    while (i >= 0) {
+      if (relApplicable(route[i])) return route[i].id;
+      i--;
+    }
+    return "rel-why-now";
+  }
+
+  function relStepInfo(id) {
+    const applicable = relApplicableRoute();
+    const pos = applicable.findIndex((c) => c.id === id);
+    return { idx: pos, total: applicable.length };
+  }
+
+  function relUpdateStepDisplay(id) {
+    const section = $('.screen[data-screen="' + id + '"]');
+    if (!section || !section.dataset.relDynamic) return;
+    const info = relStepInfo(id);
+    if (info.idx < 0) return;
+    const stepEl = section.querySelector(".rel-step");
+    const fillEl = section.querySelector(".rel-progress__fill");
+    if (stepEl) stepEl.textContent = "Шаг " + (info.idx + 1) + " из " + info.total;
+    if (fillEl) fillEl.style.width = Math.round(((info.idx + 1) / info.total) * 100) + "%";
+  }
+
+  function currentActiveScreenId() {
+    const el = $(".screen.is-active");
+    return el ? el.dataset.screen : "";
+  }
+
+  function relBuildOptionsList(body, section, stateKey, otherKey, options, otherFlag, type, max, exclusive) {
+    const list = document.createElement("div");
+    list.className = "options options--case";
+    list.setAttribute("role", type === "single" ? "radiogroup" : "group");
+    options.forEach((opt) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "option option--case";
+      btn.dataset.value = opt;
+      if (type === "single") { btn.setAttribute("role", "radio"); btn.setAttribute("aria-checked", "false"); }
+      else { btn.setAttribute("aria-pressed", "false"); }
+      btn.innerHTML =
+        '<span class="option--case__icon">' + relIconSvg(relIconFor(opt)) + '</span>' +
+        '<span class="option--case__text"></span>' +
+        '<span class="option--case__check"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>';
+      btn.querySelector(".option--case__text").textContent = opt;
+      list.appendChild(btn);
+    });
+    body.appendChild(list);
+
+    let otherWrap = null;
+    if (otherFlag) {
+      otherWrap = document.createElement("div");
+      otherWrap.className = "rel-dyn-other";
+      otherWrap.hidden = true;
+      otherWrap.innerHTML = '<label class="field__label">Свой вариант</label><textarea class="textarea" maxlength="300" placeholder="Напиши свой вариант…"></textarea>';
+      body.appendChild(otherWrap);
+      const textarea = otherWrap.querySelector("textarea");
+      textarea.value = relGet(otherKey) || "";
+      textarea.addEventListener("input", () => {
+        relSet(otherKey, textarea.value);
+        saveState();
+      });
+    }
+
+    function syncOther() {
+      if (!otherWrap) return;
+      const val = relGet(stateKey);
+      const on = Array.isArray(val) ? val.indexOf("Другое") >= 0 : val === "Другое";
+      otherWrap.hidden = !on;
+    }
+
+    function render() {
+      const val = relOptionValue({ stateKey: stateKey });
+      Array.from(list.children).forEach((btn) => {
+        const on = type === "single" ? val === btn.dataset.value : val.indexOf(btn.dataset.value) >= 0;
+        btn.setAttribute(type === "single" ? "aria-checked" : "aria-pressed", on ? "true" : "false");
+      });
+      syncOther();
+    }
+
+    list.addEventListener("click", (e) => {
+      const btn = e.target.closest(".option");
+      if (!btn) return;
+      const value = btn.dataset.value;
+      if (type === "single") {
+        relSet(stateKey, value);
+      } else {
+        let arr = relGet(stateKey);
+        if (!Array.isArray(arr)) { arr = []; relSet(stateKey, arr); }
+        const isExclusive = exclusive && exclusive.indexOf(value) >= 0;
+        const i = arr.indexOf(value);
+        if (i >= 0) {
+          arr.splice(i, 1);
+        } else if (isExclusive) {
+          arr.length = 0;
+          arr.push(value);
+        } else {
+          if (exclusive) {
+            exclusive.forEach((ex) => {
+              const exi = arr.indexOf(ex);
+              if (exi >= 0) arr.splice(exi, 1);
+            });
+          }
+          if (max && arr.length >= max) { vibrate(15); return; }
+          arr.push(value);
+        }
+      }
+      saveState();
+      render();
+      if (section._relUpdateNext) section._relUpdateNext();
+      vibrate(6);
+    });
+
+    render();
+    return { render: render, syncOther: syncOther };
+  }
+
+  function relBuildScreen(cfg) {
     const section = document.createElement("section");
     section.className = "screen screen--quiz theme-rel";
     section.dataset.screen = cfg.id;
     section.setAttribute("aria-label", "Отношения — " + cfg.question);
 
-    const prevId = idx === 0 ? "rel-why-now" : relRoute()[idx - 1].id;
-    const pct = Math.round(((idx + 1) / total) * 100);
-
     section.innerHTML =
       '<header class="topbar">' +
-        '<button class="iconbtn" type="button" data-back="' + prevId + '" aria-label="Назад">' +
+        '<button class="iconbtn" type="button" data-rel-back="1" aria-label="Назад">' +
           '<svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
         '</button>' +
         '<h2 class="topbar__title">Отношения</h2>' +
         '<span class="iconbtn iconbtn--ghost" aria-hidden="true"></span>' +
       '</header>' +
-      '<p class="rel-step">Шаг ' + (idx + 1) + ' из ' + total + '</p>' +
-      '<div class="rel-progress"><div class="rel-progress__fill" style="width:' + pct + '%"></div></div>' +
+      '<p class="rel-step"></p>' +
+      '<div class="rel-progress"><div class="rel-progress__fill" style="width:0%"></div></div>' +
       '<div class="screen__body">' +
         '<p class="question"></p>' +
         (cfg.hint ? '<p class="question-hint"></p>' : '') +
         '<div class="rel-dyn-body"></div>' +
-        (cfg.other ? '<div class="rel-dyn-other" hidden><label class="field__label"></label><textarea class="textarea" maxlength="300" placeholder="Напиши свой вариант…"></textarea></div>' : '') +
       '</div>' +
       '<div class="screen__footer"><button class="btn btn--primary btn--lg" type="button"></button></div>';
 
     section.querySelector(".question").textContent = cfg.question;
     if (cfg.hint) section.querySelector(".question-hint").textContent = cfg.hint;
-    if (cfg.other) section.querySelector(".rel-dyn-other label").textContent = "Свой вариант";
 
     const body = section.querySelector(".rel-dyn-body");
     const nextBtn = section.querySelector(".screen__footer button");
+    const backBtn = section.querySelector('[data-rel-back="1"]');
+
+    backBtn.addEventListener("click", () => goTo(relPrevId(cfg.id)));
+
+    let subRenders = [];
 
     function updateNextLabel() {
       if (cfg.type === "multi" && cfg.max) {
-        const count = relOptionValue(cfg).length;
+        const count = relOptionValue({ stateKey: cfg.stateKey }).length;
         nextBtn.textContent = "Далее (" + count + "/" + cfg.max + ")";
       } else {
         nextBtn.textContent = "Далее";
       }
     }
-
-    function syncOtherField() {
-      if (!cfg.other) return;
-      const wrap = section.querySelector(".rel-dyn-other");
-      const val = relOptionValue(cfg);
-      const otherOn = Array.isArray(val) ? val.indexOf("Другое") >= 0 : val === "Другое";
-      wrap.hidden = !otherOn;
-    }
+    section._relUpdateNext = updateNextLabel;
 
     if (cfg.type === "single" || cfg.type === "multi") {
-      const list = document.createElement("div");
-      list.className = "options options--case";
-      list.setAttribute("role", cfg.type === "single" ? "radiogroup" : "group");
-      cfg.options.forEach((opt) => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "option option--case";
-        btn.dataset.value = opt;
-        if (cfg.type === "single") { btn.setAttribute("role", "radio"); btn.setAttribute("aria-checked", "false"); }
-        else { btn.setAttribute("aria-pressed", "false"); }
-        btn.innerHTML =
-          '<span class="option--case__icon">' + relIconSvg(relIconFor(opt)) + '</span>' +
-          '<span class="option--case__text"></span>' +
-          '<span class="option--case__check"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>';
-        btn.querySelector(".option--case__text").textContent = opt;
-        list.appendChild(btn);
-      });
-      body.appendChild(list);
-
-      function renderOptions() {
-        const val = relOptionValue(cfg);
-        Array.from(list.children).forEach((btn) => {
-          const on = cfg.type === "single" ? val === btn.dataset.value : val.indexOf(btn.dataset.value) >= 0;
-          btn.setAttribute(cfg.type === "single" ? "aria-checked" : "aria-pressed", on ? "true" : "false");
-        });
-        syncOtherField();
-        updateNextLabel();
-      }
-
-      list.addEventListener("click", (e) => {
-        const btn = e.target.closest(".option");
-        if (!btn) return;
-        if (cfg.type === "single") {
-          state.relInvestigation[cfg.stateKey] = btn.dataset.value;
-        } else {
-          const arr = state.relInvestigation[cfg.stateKey];
-          const i = arr.indexOf(btn.dataset.value);
-          if (i >= 0) {
-            arr.splice(i, 1);
-          } else {
-            if (cfg.max && arr.length >= cfg.max) { vibrate(15); return; }
-            arr.push(btn.dataset.value);
-          }
-        }
-        saveState();
-        renderOptions();
-        vibrate(6);
-      });
-
-      section._relRender = renderOptions;
+      const r = relBuildOptionsList(body, section, cfg.stateKey, cfg.otherKey, cfg.options, !!cfg.other, cfg.type, cfg.max, cfg.exclusive);
+      subRenders.push(r.render);
     } else if (cfg.type === "sliders") {
       const wrap = document.createElement("div");
       wrap.className = "rel-dyn-sliders";
       cfg.sliders.forEach((s) => {
+        const path = cfg.stateKey ? cfg.stateKey + "." + s.key : s.key;
         const row = document.createElement("div");
         row.innerHTML =
           '<div class="rel-dyn-slider__label"><span class="rel-dyn-slider__label__main">' +
@@ -484,38 +894,85 @@
         wrap.appendChild(row);
         const input = row.querySelector("input");
         const out = row.querySelector("b");
-        input.value = state.relInvestigation.importantFactors[s.key];
+        const initial = relGet(path);
+        input.value = initial == null ? 5 : initial;
         out.textContent = input.value;
         input.style.setProperty("--fill", (Number(input.value) / 10) * 100 + "%");
         input.addEventListener("input", () => {
           out.textContent = input.value;
           input.style.setProperty("--fill", (Number(input.value) / 10) * 100 + "%");
-          state.relInvestigation.importantFactors[s.key] = Number(input.value);
+          relSet(path, Number(input.value));
           saveState();
         });
       });
       body.appendChild(wrap);
       nextBtn.textContent = "Далее";
-    }
-
-    if (cfg.other) {
-      const textarea = section.querySelector(".rel-dyn-other textarea");
-      textarea.value = state.relInvestigation[cfg.otherKey] || "";
-      textarea.addEventListener("input", () => {
-        state.relInvestigation[cfg.otherKey] = textarea.value;
-        saveState();
+    } else if (cfg.type === "text") {
+      const wrap = document.createElement("div");
+      wrap.className = "rel-dyn-text";
+      if (cfg.textKind === "income") {
+        wrap.innerHTML =
+          '<div class="rel-dyn-income">' +
+            '<input class="field__input rel-dyn-income__amount" type="number" min="0" inputmode="numeric" placeholder="Сумма">' +
+            '<select class="field__input rel-dyn-income__currency">' +
+              '<option value="EUR">€ EUR</option>' +
+              '<option value="USD">$ USD</option>' +
+              '<option value="RUB">₽ RUB</option>' +
+              '<option value="OTHER">Другая</option>' +
+            '</select>' +
+          '</div>';
+        body.appendChild(wrap);
+        const amountInput = wrap.querySelector(".rel-dyn-income__amount");
+        const currencySelect = wrap.querySelector(".rel-dyn-income__currency");
+        amountInput.value = relGet(cfg.stateKey) || "";
+        currencySelect.value = relGet(cfg.currencyKey) || "EUR";
+        amountInput.addEventListener("input", () => { relSet(cfg.stateKey, amountInput.value); saveState(); });
+        currencySelect.addEventListener("change", () => { relSet(cfg.currencyKey, currencySelect.value); saveState(); });
+      } else if (cfg.textKind === "input") {
+        wrap.innerHTML =
+          '<input class="field__input rel-dyn-text__input" type="text" maxlength="200" placeholder="' + (cfg.placeholder || "Напиши здесь…") + '">' +
+          (cfg.quickFill ? '<button class="btn btn--outline rel-dyn-quickfill" type="button">' + cfg.quickFill + '</button>' : '');
+        body.appendChild(wrap);
+        const input = wrap.querySelector(".rel-dyn-text__input");
+        input.value = relGet(cfg.stateKey) || "";
+        input.addEventListener("input", () => { relSet(cfg.stateKey, input.value); saveState(); });
+        const quickBtn = wrap.querySelector(".rel-dyn-quickfill");
+        if (quickBtn) {
+          quickBtn.addEventListener("click", () => {
+            input.value = cfg.quickFill;
+            relSet(cfg.stateKey, cfg.quickFill);
+            saveState();
+          });
+        }
+      } else {
+        wrap.innerHTML = '<textarea class="textarea rel-dyn-text__area" maxlength="1500" placeholder="' + (cfg.placeholder || "Напиши своими словами…") + '"></textarea>';
+        body.appendChild(wrap);
+        const textarea = wrap.querySelector("textarea");
+        textarea.value = relGet(cfg.stateKey) || "";
+        textarea.addEventListener("input", () => { relSet(cfg.stateKey, textarea.value); saveState(); });
+      }
+      nextBtn.textContent = "Далее";
+    } else if (cfg.type === "dual") {
+      cfg.groups.forEach((g) => {
+        const groupWrap = document.createElement("div");
+        groupWrap.className = "rel-dyn-group";
+        groupWrap.innerHTML = '<p class="rel-dyn-group__title">' + g.title + '</p>';
+        body.appendChild(groupWrap);
+        const r = relBuildOptionsList(groupWrap, section, g.stateKey, g.otherKey, g.options, !!g.other, "single", null, null);
+        subRenders.push(r.render);
       });
+      nextBtn.textContent = "Далее";
     }
 
-    const nextId = idx === total - 1 ? "rel-results-intro" : relRoute()[idx + 1].id;
+    updateNextLabel();
+
     nextBtn.addEventListener("click", () => {
       saveState();
-      goTo(nextId);
+      goTo(relNextId(cfg.id));
     });
 
     section._relSyncAll = function () {
-      if (section._relRender) section._relRender();
-      if (cfg.other) syncOtherField();
+      subRenders.forEach((r) => r());
       updateNextLabel();
     };
 
@@ -526,12 +983,13 @@
     document.querySelectorAll('[data-rel-dynamic="1"]').forEach((el) => el.remove());
     const route = relRoute();
     let anchor = $('[data-screen="rel-why-now"]');
-    route.forEach((cfg, idx) => {
-      const section = relBuildScreen(cfg, idx, route.length);
+    route.forEach((cfg) => {
+      const section = relBuildScreen(cfg);
       section.dataset.relDynamic = "1";
       section._relSyncAll();
       anchor.after(section);
       anchor = section;
+      relUpdateStepDisplay(cfg.id);
     });
   }
 
@@ -564,6 +1022,7 @@
 
     const active = $('.screen[data-screen="' + name + '"]');
     if (active) active.scrollTop = 0;
+    if (active && active.dataset.relDynamic) relUpdateStepDisplay(name);
 
     if (!opts.silent) vibrate(8);
   }

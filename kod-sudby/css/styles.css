@@ -1111,6 +1111,43 @@ button, .option, .tabbar__item{
   margin-top: 14px;
 }
 
+.rel-dyn-text{ margin-top: 8px; }
+.rel-dyn-text__area{ min-height: 160px; }
+.rel-dyn-quickfill{
+  margin-top: 12px;
+  width: 100%;
+}
+.rel-dyn-income{
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+.rel-dyn-income__amount{ flex: 1 1 auto; min-width: 0; }
+.rel-dyn-income__currency{
+  flex: 0 0 auto;
+  width: 108px;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M6 9l6 6 6-6' fill='none' stroke='%23e6ba6e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 14px;
+  padding-right: 30px;
+}
+.rel-dyn-income__currency option{ background: #171420; color: #f2eef7; }
+
+.rel-dyn-group{ margin-top: 18px; }
+.rel-dyn-group:first-child{ margin-top: 8px; }
+.rel-dyn-group__title{
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13.5px;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin: 0 0 10px;
+}
+
 .options--case{ gap: 10px; }
 .option--case{
   display: flex;

@@ -1,4 +1,4 @@
-const CACHE_NAME = "kod-sudby-v12";
+const CACHE_NAME = "kod-sudby-v13";
 const APP_SHELL = [
   "./",
   "./index.html",
