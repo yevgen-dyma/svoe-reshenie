@@ -507,7 +507,7 @@
       });
     }
 
-    const nextId = idx === total - 1 ? "rel-results" : relRoute()[idx + 1].id;
+    const nextId = idx === total - 1 ? "rel-results-intro" : relRoute()[idx + 1].id;
     nextBtn.addEventListener("click", () => {
       saveState();
       goTo(nextId);
@@ -1221,10 +1221,10 @@
 
     const hypotheses = relBuildHypotheses();
     const hypothesesHtml = hypotheses.length
-      ? '<div class="rel-map-block rel-map-block--hypotheses"><p class="rel-map-block__title">Первые улики / рабочие гипотезы</p><ul class="rel-map-block__list">' +
+      ? '<div class="rel-map-block rel-map-block--hypotheses"><p class="rel-map-block__title">Возможные причины</p><p class="rel-map-block__text rel-map-block__subtitle">Эти гипотезы требуют проверки — не готовый диагноз</p><ul class="rel-map-block__list">' +
           hypotheses.map((h) => "<li>" + h + "</li>").join("") +
         "</ul></div>"
-      : relMapBlock("Первые улики / рабочие гипотезы", "");
+      : relMapBlock("Возможные причины", "");
 
     let html = "";
     html += relMapBlock("Где я сейчас", whereNow);
@@ -1237,6 +1237,7 @@
 
     html +=
       '<div class="rel-cta">' +
+        '<img class="rel-cta__portrait" src="assets/reference/relationships/00-evgeniy-hypnodetective.png" alt="Евгений Дыма" width="96" height="96" loading="lazy">' +
         '<p class="rel-cta__title">Продолжи расследование вместе с Евгением Дымой</p>' +
         '<ul class="rel-cta__list">' +
           "<li>Разбор твоей истории</li>" +
